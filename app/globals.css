@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* #region Globals */
+:root {
+  --tx1: rgb(245, 245, 245);
+  --tx2: rgb(192, 147, 240); 
+  
+  --bg1: rgb(12, 12, 12); 
+  --bg2: rgb(49, 12, 88); 
+
+  --ac1: rgb(176, 28, 74); 
+  --ac2: rgb(122, 20, 105); 
+  --ac3: rgb(102, 204, 170);
+}
+
+* {
+  scrollbar-width: thin; 
+  scrollbar-color: white black; 
+}
+
+html, body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+
+::selection {
+  background-color: blue;
+  color: white;
+}
+/* #endregion */
+
+
+
+header{
+  color: white;
+  font-size: clamp(16px, 1vw, 1vw);
+  font-weight: 600;
+  background-color: black;
+
+  padding: 6px clamp(5px, 8vw, 20px); 
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  z-index: 40;
+}
+
+
+header nav {
+  background-color: #E5E5E51a;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 3px 16px;
+  border-radius: 99px;
+}
+
+
+
+.slot-counter {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
