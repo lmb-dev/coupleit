@@ -198,14 +198,14 @@ export default function Game() {
                   }
                   className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg transition-colors"
                 >
-                  Lock In "
+                  Lock In &quot;
                   {
                     guessedWords
                       .slice()
                       .reverse()
                       .find(({ status }) => status === 'rhyme' || status === 'correct')!.word
                   }
-                  " as Final Answer
+                  &quot; as Final Answer
                 </button>
               </div>
         )}
