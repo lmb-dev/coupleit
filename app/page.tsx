@@ -39,16 +39,9 @@ export default function Home() {
               <br /> Find the perfect match or one{" "}
               <strong className="underline">unheard</strong>
             </motion.p>
-            <motion.button
-              onClick={() => setShowGame(true)}
-              className="text-2xl text-white bg-black px-16 py-2 rounded-full transition"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              whileHover={{ scale: 1.1, rotate: 3 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
+            <button onClick={() => setShowGame(true)} className="text-2xl text-white bg-black px-16 py-2 rounded-full transition duration-700 ease-in-out hover:scale-105 hover:rotate-3">
               Play
-            </motion.button>
+            </button>
           </motion.div>
         ) : (
           <motion.div

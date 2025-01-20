@@ -59,9 +59,3 @@ header nav {
   border-radius: 99px;
 }
 
-
-
-.slot-counter {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-}
