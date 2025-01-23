@@ -1,6 +1,14 @@
+import { useState } from "react";
+import InfoModal from "./modals/info";
 
 
 export default function Header() {
+  const [showInfoModal, setShowInfoModal] = useState(false);
+
+  const handleInfoBoxClick = () => {
+    setShowInfoModal(true);
+  };
+
   return (
     <header className="grid grid-cols-[1fr_auto_1fr]">
       
@@ -14,9 +22,11 @@ export default function Header() {
 
       {/* Info Button */}
       <div className="flex justify-end">
-        <button className="">Info</button>
+        <button onClick={handleInfoBoxClick}>Info</button>
       </div>
       
+
+      <InfoModal showInfoModal={showInfoModal} setShowInfoModal={setShowInfoModal}/>
     </header>
   );
 }

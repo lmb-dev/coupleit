@@ -1,13 +1,12 @@
-import { line } from 'framer-motion/client';
-import { parseLine } from '../utils/parseLine';
-import React, { useState } from 'react';
-import { AiOutlineCopy } from 'react-icons/ai'; // Import React Icon
-import { ImCross } from "react-icons/im";
+import { parseLine } from '../../utils/parseLine';
+import React, { useEffect, useRef, useState } from 'react';
+import { ImCross, ImCopy  } from "react-icons/im";
+import { motion } from 'framer-motion';
 
 
 interface ResultsModalProps {
-  showResults: boolean;
-  setShowResults: React.Dispatch<React.SetStateAction<boolean>>;
+  showResultsModal: boolean;
+  setShowResultsModal: React.Dispatch<React.SetStateAction<boolean>>;
   guessedWords: {
     word: string;
     status: 'incorrect' | 'rhyme' | 'correct';
@@ -16,15 +15,29 @@ interface ResultsModalProps {
   isGameOver: boolean;
 }
 
-export default function ResultsModal({
-  showResults,
-  setShowResults,
-  guessedWords,
-  currentPoem,
-  isGameOver,
-}: ResultsModalProps) {
+export default function ResultsModal({showResultsModal, setShowResultsModal, guessedWords, currentPoem, isGameOver}: ResultsModalProps) {
   const [copyStatus, setCopyStatus] = useState<string>("Copy");
 
+  // #region Popup Close
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setShowResultsModal(false);
+      }
+    };
+
+    if (showResultsModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showResultsModal, setShowResultsModal]);
+  // #endregion  
+    
   // Generate shareable text
   const generateShareText = () => {
     if (!currentPoem || !isGameOver) return '';
@@ -68,9 +81,15 @@ export default function ResultsModal({
   };
 
   return (
-    showResults && (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-xl max-w-md w-full m-4 relative">
+    showResultsModal && (
+      <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
+        <motion.div
+          ref={popupRef}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="bg-white p-4 rounded-lg max-w-lg w-5/6 relative"
+        >
 
 
           <h2 className="text-2xl font-bold mb-4 text-center">Couplet Complete!</h2>
@@ -78,7 +97,7 @@ export default function ResultsModal({
             <div className="bg-gray-100 p-4 rounded-lg italic whitespace-pre-wrap relative">
               {generateShareText()}
               <div className="absolute top-4 right-4 flex items-center space-x-2 cursor-pointer text-blue-500 hover:text-blue-600 transition-colors">
-                <AiOutlineCopy size={20} onClick={handleCopyText} />
+                <ImCopy size={20} onClick={handleCopyText} />
                 <span onClick={handleCopyText}>{copyStatus}</span>
               </div>
             </div>
@@ -95,13 +114,13 @@ export default function ResultsModal({
           </div>
           <div className="flex justify-center absolute top-4 right-4  space-x-4">
             <button
-              onClick={() => setShowResults(false)}
+              onClick={() => setShowResultsModal(false)}
               className="text-gray-400"
             >
               <ImCross/>
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     )
   );

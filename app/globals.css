@@ -36,8 +36,8 @@ header{
 
   padding: 6px clamp(5px, 8vw, 20px); 
   align-items: center;
-  position: absolute;
-  top: 0px;
+  position: sticky;
+  top: -2px;
   width: 100%;
   z-index: 40;
 }

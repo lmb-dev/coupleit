@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Keyboard from './keyboard';
-import ResultsModal from './results';
-import HintsModal from './hints';
+import ResultsModal from './modals/results';
+import HintsModal from './modals/hints';
 import useGameState from '../utils/useGameState';
 import {parseLine} from '../utils/parseLine';
 
@@ -19,7 +19,7 @@ export default function Game() {
 
   //#region Game State Logic
   const [guess, setGuess] = useState('');
-  const [showResults, setShowResults] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
   const [showHintsModal, setShowHintsModal] = useState(false);
 
   const isGameOver =
@@ -49,7 +49,7 @@ export default function Game() {
     setGuess('');
 
     if (isCorrect) {
-      setShowResults(true);
+      setShowResultsModal(true);
     }
   };
   //#endregion
@@ -88,7 +88,7 @@ export default function Game() {
   if (!currentPoem) return null;
 
   return (
-    <section className="w-[100vw] p-[3vw]">
+    <section className="mt-8 p-[3vw]">
       {/* Game Progress */}
       <div className="mb-4 text-center">
         <p className="text-gray-600">Guesses remaining: {4 - guessedWords.length}/4</p>
@@ -127,7 +127,7 @@ export default function Game() {
       <div className="p-2 mb-6 border-2 border-gray-200 rounded-lg bg-gray-50 text-center text-xl max-w-lg mx-auto font-medium">
         {guess || (isGameOver ? (
           <button
-            onClick={() => setShowResults(true)}
+            onClick={() => setShowResultsModal(true)}
             className=" px-6 py-2 rounded-lg transition-colors"
           >
             VIEW RESULTS
@@ -140,32 +140,13 @@ export default function Game() {
       <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
 
       {/* Hint Box */}
-      <div
-        onClick={handleHintBoxClick}
-        className="max-w-20 mx-auto mt-4 text-center p-3 bg-gray-200 rounded-lg cursor-pointer text-blue-500"
-      >
+      <div onClick={handleHintBoxClick} className="max-w-20 mx-auto mt-4 text-center p-3 bg-gray-200 rounded-lg cursor-pointer text-blue-500">
         Hints
       </div>
 
-
-
-
-      {/* Results Modal */}
-      <ResultsModal
-        showResults={showResults}
-        setShowResults={setShowResults}
-        guessedWords={guessedWords}
-        currentPoem={currentPoem}
-        isGameOver={isGameOver}
-      />
-
-      {/* Hints Modal */}
-      <HintsModal
-        showHintsModal={showHintsModal}
-        setShowHintsModal={setShowHintsModal}
-        clues={currentPoem.clues}
-        unlockedClues={currentPoem.clues.slice(0, guessedWords.length)}
-      />
+      {/* Modals */}
+      <ResultsModal showResultsModal={showResultsModal} setShowResultsModal={setShowResultsModal} guessedWords={guessedWords} currentPoem={currentPoem} isGameOver={isGameOver}/>
+      <HintsModal showHintsModal={showHintsModal} setShowHintsModal={setShowHintsModal} clues={currentPoem.clues} unlockedClues={currentPoem.clues.slice(0, guessedWords.length)}/>
     </section>
 
   );
