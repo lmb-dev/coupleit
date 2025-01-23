@@ -35,8 +35,8 @@ export default function ResultsModal({
 
     // Generate guesses as emojis
     const guessesEmojis = Array.from({ length: maxGuesses }, (_, i) => {
-      if (i < correctIndex) return '🔴'; // Incorrect guesses
-      if (i === correctIndex) return '🟢'; // Correct guess
+      if (i < correctIndex) return '❌'; // Incorrect guesses
+      if (i === correctIndex) return '✅'; // Correct guess
       if (i < guessesUsed) return '⚪'; // Guesses after correct
       return '⚪'; // Remaining unused guesses
     }).join('');
@@ -51,9 +51,9 @@ export default function ResultsModal({
       )
       .join('\n');
 
-    return `✨🌟 Couple It! 🌟✨\n\n${couplet}\n\nGuesses: ${guessesEmojis}\nFinal Answer: ${
-      correctIndex !== -1 ? '✅' : '❌'
-    }`;
+    const date = new Date().toLocaleDateString("en-GB");
+
+    return `✨🌟 Couple It! 🌟✨\n${date}\n\n${couplet}\n\nGuesses: ${guessesEmojis}`;
   };
 
   // Copy text to clipboard
@@ -73,7 +73,7 @@ export default function ResultsModal({
         <div className="bg-white p-6 rounded-xl max-w-md w-full m-4 relative">
 
 
-          <h2 className="text-2xl font-bold mb-4 text-center">Today Complete</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">Couplet Complete!</h2>
           <div className="mb-6">
             <div className="bg-gray-100 p-4 rounded-lg italic whitespace-pre-wrap relative">
               {generateShareText()}
@@ -87,7 +87,7 @@ export default function ResultsModal({
             <h3 className="text-xl font-bold mb-2">
               {currentPoem?.title} by {currentPoem?.author}
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-24 overflow-y-auto pr-2">
               {currentPoem?.lines.map((line, index) => (
                 <p key={index} className="leading-6">{parseLine(line, true)}</p>
               ))}

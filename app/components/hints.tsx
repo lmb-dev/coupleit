@@ -1,4 +1,5 @@
 import React from 'react';
+import { ImCross } from 'react-icons/im';
 
 interface HintsModalProps {
   showHintsModal: boolean;
@@ -12,7 +13,7 @@ const HintsModal: React.FC<HintsModalProps> = ({ showHintsModal, setShowHintsMod
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+      <div className="bg-white p-6 rounded-lg max-w-lg w-full relative">
         <h2 className="text-2xl font-bold mb-4">Hints</h2>
         <div className="space-y-4">
           {clues.map((clue, index) => {
@@ -33,12 +34,12 @@ const HintsModal: React.FC<HintsModalProps> = ({ showHintsModal, setShowHintsMod
             );
           })}
         </div>
-        <div className="mt-4 text-center">
+        <div className=" absolute top-4 right-4">
           <button
             onClick={() => setShowHintsModal(false)}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg"
+            className="text-gray-400"
           >
-            Close
+            <ImCross/>
           </button>
         </div>
       </div>
