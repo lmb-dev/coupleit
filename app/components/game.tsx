@@ -124,33 +124,30 @@ export default function Game() {
       </div>
 
       {/* Guess Input Display */}
-      <div className="p-4 mb-6 border-2 border-gray-200 rounded-lg bg-gray-50 text-center text-xl max-w-lg mx-auto font-medium min-h-[60px]">
-        {guess || (isGameOver ? 'Game Over' : 'Type your answer...')}
+      <div className="p-2 mb-6 border-2 border-gray-200 rounded-lg bg-gray-50 text-center text-xl max-w-lg mx-auto font-medium">
+        {guess || (isGameOver ? (
+          <button
+            onClick={() => setShowResults(true)}
+            className=" px-6 py-2 rounded-lg transition-colors"
+          >
+            VIEW RESULTS
+          </button>
+        ) : 'Type your answer...')}
       </div>
+
 
       {/* Keyboard */}
       <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
 
       {/* Hint Box */}
       <div
-        title="Hints"
         onClick={handleHintBoxClick}
-        className="absolute bottom-4 left-4 p-3 bg-gray-200 rounded-full cursor-pointer text-blue-500"
+        className="max-w-20 mx-auto mt-4 text-center p-3 bg-gray-200 rounded-lg cursor-pointer text-blue-500"
       >
-        ?
+        Hints
       </div>
 
-      {/* Button to Reopen Results Modal */}
-      {isGameOver && (
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setShowResults(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
-          >
-            View Results
-          </button>
-        </div>
-      )}
+
 
 
       {/* Results Modal */}

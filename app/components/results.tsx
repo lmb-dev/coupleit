@@ -2,6 +2,8 @@ import { line } from 'framer-motion/client';
 import { parseLine } from '../utils/parseLine';
 import React, { useState } from 'react';
 import { AiOutlineCopy } from 'react-icons/ai'; // Import React Icon
+import { ImCross } from "react-icons/im";
+
 
 interface ResultsModalProps {
   showResults: boolean;
@@ -68,10 +70,10 @@ export default function ResultsModal({
   return (
     showResults && (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl max-w-md w-full m-4 ">
+        <div className="bg-white p-6 rounded-xl max-w-md w-full m-4 relative">
 
 
-          <h2 className="text-2xl font-bold mb-4 text-center">Game Over</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">Today Complete</h2>
           <div className="mb-6">
             <div className="bg-gray-100 p-4 rounded-lg italic whitespace-pre-wrap relative">
               {generateShareText()}
@@ -91,12 +93,12 @@ export default function ResultsModal({
               ))}
             </div>
           </div>
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center absolute top-4 right-4  space-x-4">
             <button
               onClick={() => setShowResults(false)}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="text-gray-400"
             >
-              Close
+              <ImCross/>
             </button>
           </div>
         </div>
