@@ -8,7 +8,7 @@ export default function Home() {
   const [showGame, setShowGame] = useState(false);
 
   return (
-    <main className="flex flex-col items-center justify-center h-full">
+    <main className="flex flex-col items-center justify-center h-full p-[3vw]">
       <Header />
 
       <AnimatePresence mode="wait">
