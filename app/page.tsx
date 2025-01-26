@@ -5,31 +5,22 @@ import Game from "./components/game";
 import Header from "./components/header";
 import WelcomeSection from "./components/welcome";
 
+//Server-Side Fetching
+
 export default function Home() {
   const [showGame, setShowGame] = useState<boolean>(false);
 
   return (
-    <main>
+    <main className="relative overflow-hidden h-[100dvh]">
       <Header />
-      <AnimatePresence mode="wait">
-        {!showGame ? (
-            <motion.div
-              key="welcome"
-              initial={{ opacity: 0, y: -50, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <WelcomeSection onStartGame={() => setShowGame(true)} />
-            </motion.div>
-
-        ) : (
-
-          <motion.div
-            key="game"
-            initial={{ opacity: 0, y: 50, scale: 0.8, rotate: -10 }}
-            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+      <WelcomeSection onStartGame={() => setShowGame(true)} />
+      <AnimatePresence>
+        {showGame && (
+          <motion.div 
+            className="fixed inset-0 z-10"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Game />
           </motion.div>

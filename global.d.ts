@@ -5,7 +5,7 @@ interface Poem {
   author: string; 
   lines: string[];
   displayRange: [number, number]; 
-  clues: { type: 'Synonym' | 'First Letter' | 'Anagram'; text: string }[];
+  clues: { type: string; text: string }[];
 }
 
 

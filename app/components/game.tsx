@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Keyboard from './keyboard';
 import ResultsModal from './modals/results';
-import HintsModal from './modals/hints';
+import Hints from './modals/hints';
 import useGameState from '../utils/useGameState';
 import {parseLine} from '../utils/parseLine';
 
@@ -10,9 +10,21 @@ import { ImCross, ImCheckmark, ImMusic   } from "react-icons/im";
 
 export default function Game() {
   //#region Load Poem and Local Storage
-  const poems: Poem[] = require('../utils/poems.json');
+  const [poems, setPoems] = useState<Poem[]>([]);
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
   const currentPoem = poems.find((poem) => poem.id === today);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await fetch('https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json');
+        if (response.ok) {
+          const data: Poem[] = await response.json();
+          setPoems(data);
+        } 
+    };
+
+    fetchData();
+  }, []);
 
   const { guessedWords, setGuessedWords } = useGameState(today);
   //#endregion
@@ -20,13 +32,17 @@ export default function Game() {
   //#region Game State Logic
   const [guess, setGuess] = useState('');
   const [showResultsModal, setShowResultsModal] = useState(false);
-  const [showHintsModal, setShowHintsModal] = useState(false);
 
   const isGameOver =
     guessedWords.some(({ status }) => status === 'correct') || guessedWords.length >= 4;
 
   const handleSubmit = async () => {
     if (!guess || isGameOver) return;
+
+    const wordCheckResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess}`);
+    if (!wordCheckResponse.ok || guess.length < 2 || guessedWords.some(({ word }) => word.toLowerCase() === guess.toLowerCase())) {
+      return;
+    }
 
     const correctWord = currentPoem?.lines.join('\n').match(/\/(.+?)\//)?.[1];
     const rhymeWord = currentPoem?.lines.join('\n').match(/\*(.+?)\*/)?.[1];
@@ -81,14 +97,11 @@ export default function Game() {
   }, [handleKeyPress]);
   //#endregion
 
-  const handleHintBoxClick = () => {
-    setShowHintsModal(true);
-  };
 
   if (!currentPoem) return null;
 
   return (
-    <section className="mt-8 p-[3vw]">
+    <div className="bg-[var(--y1)] p-[3vw] min-h-[100vh]">
       {/* Game Progress */}
       <div className="mb-4 text-center">
         <p className="text-gray-600">Guesses remaining: {4 - guessedWords.length}/4</p>
@@ -128,7 +141,7 @@ export default function Game() {
         {guess || (isGameOver ? (
           <button
             onClick={() => setShowResultsModal(true)}
-            className=" px-6 py-2 rounded-lg transition-colors"
+            className=" px-6 py-2 rounded-lg transition-colors font-bold"
           >
             VIEW RESULTS
           </button>
@@ -140,14 +153,12 @@ export default function Game() {
       <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
 
       {/* Hint Box */}
-      <div onClick={handleHintBoxClick} className="max-w-20 mx-auto mt-4 text-center p-3 bg-gray-200 rounded-lg cursor-pointer text-blue-500">
-        Hints
-      </div>
+      <Hints clues={currentPoem.clues} unlockedClues={currentPoem.clues.slice(0, guessedWords.length)}/>
+
 
       {/* Modals */}
       <ResultsModal showResultsModal={showResultsModal} setShowResultsModal={setShowResultsModal} guessedWords={guessedWords} currentPoem={currentPoem} isGameOver={isGameOver}/>
-      <HintsModal showHintsModal={showHintsModal} setShowHintsModal={setShowHintsModal} clues={currentPoem.clues} unlockedClues={currentPoem.clues.slice(0, guessedWords.length)}/>
-    </section>
+    </div>
 
   );
 }

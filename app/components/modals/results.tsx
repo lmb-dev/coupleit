@@ -1,8 +1,7 @@
 import { parseLine } from '../../utils/parseLine';
 import React, { useEffect, useRef, useState } from 'react';
-import { ImCross, ImCopy  } from "react-icons/im";
+import { ImCross, ImCopy } from "react-icons/im";
 import { motion } from 'framer-motion';
-
 
 interface ResultsModalProps {
   showResultsModal: boolean;
@@ -37,22 +36,38 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
     };
   }, [showResultsModal, setShowResultsModal]);
   // #endregion  
-    
+
+  // Helper function to convert text to italic Unicode characters
+  const toItalicUnicode = (text: string): string => {
+    const charMap: Record<string, string> = {
+      A: '\u{1D434}', B: '\u{1D435}', C: '\u{1D436}', D: '\u{1D437}', E: '\u{1D438}',
+      F: '\u{1D439}', G: '\u{1D43A}', H: '\u{1D43B}', I: '\u{1D43C}', J: '\u{1D43D}',
+      K: '\u{1D43E}', L: '\u{1D43F}', M: '\u{1D440}', N: '\u{1D441}', O: '\u{1D442}',
+      P: '\u{1D443}', Q: '\u{1D444}', R: '\u{1D445}', S: '\u{1D446}', T: '\u{1D447}',
+      U: '\u{1D448}', V: '\u{1D449}', W: '\u{1D44A}', X: '\u{1D44B}', Y: '\u{1D44C}', Z: '\u{1D44D}',
+      a: '\u{1D44E}', b: '\u{1D44F}', c: '\u{1D450}', d: '\u{1D451}', e: '\u{1D452}',
+      f: '\u{1D453}', g: '\u{1D454}', h: '\u{210E}',  i: '\u{1D456}', j: '\u{1D457}',
+      k: '\u{1D458}', l: '\u{1D459}', m: '\u{1D45A}', n: '\u{1D45B}', o: '\u{1D45C}',
+      p: '\u{1D45D}', q: '\u{1D45E}', r: '\u{1D45F}', s: '\u{1D460}', t: '\u{1D461}',
+      u: '\u{1D462}', v: '\u{1D463}', w: '\u{1D464}', x: '\u{1D465}', y: '\u{1D466}', z: '\u{1D467}',
+    };
+
+    return text.split('').map(char => charMap[char] || char).join('');
+  };
+
   // Generate shareable text
   const generateShareText = () => {
     if (!currentPoem || !isGameOver) return '';
 
-    const correctIndex = guessedWords.findIndex(({ status }) => status === 'correct');
     const guessesUsed = guessedWords.length;
     const maxGuesses = 4;
 
     // Generate guesses as emojis
     const guessesEmojis = Array.from({ length: maxGuesses }, (_, i) => {
-      if (i < correctIndex) return '❌'; // Incorrect guesses
-      if (i === correctIndex) return '✅'; // Correct guess
-      if (i < guessesUsed) return '⚪'; // Guesses after correct
-      return '⚪'; // Remaining unused guesses
+      if (i < guessesUsed) return guessedWords[i].status === 'correct' ? '📗' : '📕'; 
+      return '🕮'; 
     }).join('');
+    
 
     // Generate the couplet with formatting removed
     const couplet = Array.from(
@@ -66,7 +81,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
 
     const date = new Date().toLocaleDateString("en-GB");
 
-    return `✨🌟 Couple It! 🌟✨\n${date}\n\n${couplet}\n\nGuesses: ${guessesEmojis}`;
+    return toItalicUnicode(`✨🌟 Couple It! 🌟✨\n${date}\n\n${couplet}\n\nGuesses: ${guessesEmojis}`);
   };
 
   // Copy text to clipboard
@@ -91,10 +106,9 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           className="bg-white p-4 rounded-lg max-w-lg w-5/6 relative"
         >
 
-
           <h2 className="text-2xl font-bold mb-4 text-center">Couplet Complete!</h2>
           <div className="mb-6">
-            <div className="bg-gray-100 p-4 rounded-lg italic whitespace-pre-wrap relative">
+            <div className="bg-gray-100 p-4 rounded-lg whitespace-pre-wrap relative">
               {generateShareText()}
               <div className="absolute top-4 right-4 flex items-center space-x-2 cursor-pointer text-blue-500 hover:text-blue-600 transition-colors">
                 <ImCopy size={20} onClick={handleCopyText} />

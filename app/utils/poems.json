@@ -1,6 +1,6 @@
 [
   {
-    "id": "20250122",
+    "id": "20250125",
     "title": "A Wild Lake",
     "author": "John Doe",
     "lines": [
@@ -17,7 +17,7 @@
     ]
   },
   {
-    "id": "20250123",
+    "id": "20250126",
     "title": "A Wild Lake",
     "author": "John Doe",
     "lines": [
@@ -34,7 +34,41 @@
     ]
   },
   {
-    "id": "20250124",
+    "id": "20250127",
+    "title": "A Wild Lake",
+    "author": "John Doe",
+    "lines": [
+      "The which I could not love the less,",
+      "So lovely was the loneliness",
+      "Of a wild lake, with black rock *bound*,",
+      "And the tall pines that towered /around/."
+    ],
+    "displayRange": [2, 3],
+    "clues": [
+      { "type": "Synonym", "text": "Nearby" },
+      { "type": "First Letter", "text": "a" },
+      { "type": "Anagram", "text": "Drouan" }
+    ]
+  },
+  {
+    "id": "20250128",
+    "title": "A Wild Lake",
+    "author": "John Doe",
+    "lines": [
+      "The which I could not love the less,",
+      "So lovely was the loneliness",
+      "Of a wild lake, with black rock *bound*,",
+      "And the tall pines that towered /around/."
+    ],
+    "displayRange": [2, 3],
+    "clues": [
+      { "type": "Synonym", "text": "Nearby" },
+      { "type": "First Letter", "text": "a" },
+      { "type": "Anagram", "text": "Drouan" }
+    ]
+  },
+  {
+    "id": "20250129",
     "title": "A Wild Lake",
     "author": "John Doe",
     "lines": [

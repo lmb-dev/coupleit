@@ -5,50 +5,63 @@
 
 /* #region Globals */
 :root {
-  --tx1: rgb(245, 245, 245);
-  --tx2: rgb(192, 147, 240); 
+  --tx1: rgb(0, 0, 0);
+  --tx2: rgb(255,255,255); 
   
-  --bg1: rgb(12, 12, 12); 
-  --bg2: rgb(49, 12, 88); 
+  --r1: rgb(252,214,209); 
+  --r2: rgb(251,177,167); 
+  --r3: rgb(246,91,70); 
 
-  --ac1: rgb(176, 28, 74); 
-  --ac2: rgb(122, 20, 105); 
-  --ac3: rgb(102, 204, 170);
+  --y1: rgb(255,244,225); 
+  --y2: rgb(253,224,174); 
+  --y3: rgb(252,192,89); 
+
+  --g1: rgb(224,242,217); 
+  --g2: rgb(191,239,172); 
+  --g3: rgb(115,237,66); 
+
+  --merienda: 'Merienda', cursive;
 }
 
 
 
 
 
-::selection {
-  background-color: blue;
-  color: white;
-}
+
 /* #endregion */
 
 
 
 header{
-  color: white;
+  color: var(--tx2);
   font-size: clamp(16px, 1vw, 1vw);
   font-weight: 600;
-  background-color: black;
+  background-color: var(--tx1);
 
   padding: 6px clamp(5px, 8vw, 20px); 
   align-items: center;
-  position: sticky;
-  top: -2px;
+  position: absolute;
   width: 100%;
   z-index: 40;
 }
 
 
-header nav {
-  background-color: #E5E5E51a;
-  justify-content: center;
-  white-space: nowrap;
-  padding: 3px 16px;
-  border-radius: 99px;
+.welcome {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--r1);
+}
+
+.welcome h1{
+  font-size: clamp(64px, 10vw, 72px);
+  font-family: var(--merienda);
+  font-weight: 400;
+}
+
+
+.welcome section{
+  background-color: var(--r2);
 }
 
 
