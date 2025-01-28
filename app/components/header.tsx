@@ -24,7 +24,6 @@ export default function Header() {
       </div>
       
 
-      <InfoModal showInfoModal={showInfoModal} setShowInfoModal={setShowInfoModal}/>
     </header>
   );
 }
