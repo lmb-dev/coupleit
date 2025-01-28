@@ -1,18 +1,22 @@
-//----POEM DATA----
+interface GameData {
+  id: string;
+  poem: Poem;
+  clues: { type: string; text: string }[];
+}
+
 interface Poem {
-  id: string; 
   title: string;
   author: string; 
+  date: string; 
   lines: string[];
   displayRange: [number, number]; 
-  clues: { type: string; text: string }[];
 }
 
 
 interface GameState {
   guessedWords: {
     word: string;
-    status: 'incorrect' | 'rhyme' | 'correct';
+    status: 'incorrect' | 'correct';
   }[];
   date: string;
 }

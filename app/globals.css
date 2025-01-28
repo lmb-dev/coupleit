@@ -20,13 +20,23 @@
   --g2: rgb(191,239,172); 
   --g3: rgb(115,237,66); 
 
+  --b1: rgb(225, 242, 252);
+  --b2: rgb(174, 220, 253);
+  --b3: rgb(70, 157, 246); 
+
+
   --merienda: 'Merienda', cursive;
 }
 
 
+.merienda{
+  font-family: var(--merienda);
+}
 
-
-
+body {
+  min-height: 100vh;
+  background-color: var(--tx1);
+}
 
 /* #endregion */
 
@@ -38,7 +48,8 @@ header{
   font-weight: 600;
   background-color: var(--tx1);
 
-  padding: 6px clamp(5px, 8vw, 20px); 
+  height: 36px;
+  padding: 0px clamp(5px, 8vw, 20px); 
   align-items: center;
   position: absolute;
   width: 100%;
@@ -53,15 +64,23 @@ header{
   background-color: var(--r1);
 }
 
-.welcome h1{
-  font-size: clamp(64px, 10vw, 72px);
-  font-family: var(--merienda);
-  font-weight: 400;
+
+.r-section{
+  background-color: var(--r2);
+  border-bottom: 8px solid var(--r3);
+  padding: 1rem;
 }
 
+.y-section{
+  background-color: var(--y2);
+  border-bottom: 8px solid var(--y3);
+  padding: 1rem;
+}
 
-.welcome section{
-  background-color: var(--r2);
+.g-section{
+  background-color: var(--g2);
+  border-bottom: 8px solid var(--g3);
+  padding: 1rem;
 }
 
 
@@ -72,11 +91,11 @@ header{
   padding: 12px 0px;
   font-size: clamp(16px, 2vw, 24px);
   font-weight: 600;
-  background-color: rgb(75, 73, 73);
+  background-color: var(--tx1);
   color: white;
   border-radius: 0.5rem
 }
 
 .keyboard button:hover {
-  background-color: rgb(112, 108, 108);
+  background-color: rgb(50, 50, 50);
 }
