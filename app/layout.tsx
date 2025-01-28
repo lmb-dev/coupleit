@@ -28,12 +28,12 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
 //#region Dynamic Metadata
 const fetchDynamicDescription = async (): Promise<string> => {
   const response = await fetch('https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json');
-  const poems: Poem[] = await response.json();
+  const poems: GameData[] = await response.json();
   
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');  
   const todayPoem = poems.find(poem => poem.id === today);
   return todayPoem 
-    ? `Guess the rhyming word in today's poem: "${todayPoem.title}" by ${todayPoem.author}`
+    ? `Guess the rhyming word in today's poem: "${todayPoem.poem.title}" by ${todayPoem.poem.author}`
     : "Guess today's rhyming word!";
 };
 //#endregion
