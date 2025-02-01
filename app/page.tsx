@@ -6,9 +6,12 @@ import { formatDateFromId } from "./utils/formatDate";
 
 
 
-
 export default async function Home() {
-  const res = await fetch("https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json");
+  const res = await fetch("https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json",
+    {
+      cache: 'no-store'
+    }
+  );  
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
   const games: GameData[] = await res.json();
