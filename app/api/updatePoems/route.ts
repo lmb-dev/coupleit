@@ -4,7 +4,7 @@ import { getRequestContext } from "@cloudflare/next-on-pages";
 export const runtime = 'edge';
 
 interface RequestData {
-  data: unknown;
+  data: GameData[];
 }
 
 export async function POST(request: Request) {

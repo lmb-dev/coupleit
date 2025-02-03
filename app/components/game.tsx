@@ -6,7 +6,7 @@ import Hints from './hints';
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface GameProps {
   todaysGame: GameData;
@@ -85,11 +85,13 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
         Play
       </button>
 
+      <AnimatePresence>
       {showGame && (
         <motion.div
           className="fixed inset-0 z-10 overflow-hidden bg-black bg-opacity-80"
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
+          exit={{ y: "100%" }}
           transition={{ duration: 0.4, ease: "easeOut" }}
           style={{
             height: '100svh', // Fill the entire viewport height
@@ -108,6 +110,7 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
               width={223} 
               height={329}
               className='w-8 h-12 mx-auto'
+              onClick={() => setShowGame(false)}
             />
 
             <div className="my-2 y-section text-lg text-left">
@@ -153,6 +156,7 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
           </div>
         </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

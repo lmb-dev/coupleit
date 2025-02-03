@@ -1,66 +1,73 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Calendar from './calendar';
+import { parseLine } from '../utils/parseLine';
 
 
 
-const Admin: React.FC = () => {
-  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+export default function Admin() {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [games, setGames] = useState<Map<string, GameData>>(new Map());
   const [currentGame, setCurrentGame] = useState<GameData | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
 
   useEffect(() => {
     const fetchGames = async () => {
-      try {
-        const response = await fetch('https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json');
-        if (!response.ok) throw new Error('Failed to fetch poems');
-        const data: GameData[] = await response.json();
-        const gamesMap = new Map();
-        data.forEach(game => gamesMap.set(game.id, game));
-        setGames(gamesMap);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load games');
-      } finally {
-        setLoading(false);
-      }
+      const response = await fetch('https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json');
+      const data: GameData[] = await response.json();
+      const gamesMap = new Map();
+      data.forEach(game => gamesMap.set(game.id, game));
+      setGames(gamesMap);
     };
 
     fetchGames();
   }, []);
 
-  const handlePrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
+  const formatSelectedText = (formatChar: string) => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    
+    const fullSelectedText = textarea.value.substring(start, end);
+    const selectedText = fullSelectedText.trim();
+    
+    if (selectedText) {
+      const startOffset = fullSelectedText.indexOf(selectedText);
+      const formattedText = `${formatChar}${selectedText}${formatChar}`;
+      
+      const newValue = 
+        textarea.value.slice(0, start + startOffset) + 
+        formattedText + 
+        textarea.value.slice(start + startOffset + selectedText.length);
+      
+      handlePoemChange('lines', newValue.split('\n'));
+      
+      // Set cursor position after formatting
+      setTimeout(() => {
+        textarea.setSelectionRange(start + startOffset, start + startOffset + formattedText.length);
+        textarea.focus();
+      }, 0);
     }
   };
 
-  const handleNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
+  const setDisplayRangeFromSelection = () => {
+    if (!textareaRef.current || !currentGame) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    
+    const lines = textarea.value.split('\n');
+    const startLine = textarea.value.slice(0, start).split('\n').length-1;
+    const endLine = textarea.value.slice(0, end).split('\n').length-1;
+    
+    handlePoemChange('displayRange', [startLine, endLine]);
   };
 
-  const formatDate = (year: number, month: number, day: number): string => {
-    return `${year}${String(month + 1).padStart(2, '0')}${String(day).padStart(2, '0')}`;
-  };
-
-  const getDaysInMonth = (month: number, year: number): number => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const isDateHighlighted = (date: string): boolean => {
-    return games.has(date);
-  };
 
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
@@ -78,28 +85,14 @@ const Admin: React.FC = () => {
           lines: [],
           displayRange: [1, 1]
         },
-        clues: []
+        clues: Array(3).fill({ type: '', text: '' }),
       });
     }
     setIsEditing(!game); // Edit mode for new games
   };
 
-  const handleAddClue = () => {
-    if (!currentGame) return;
-    setCurrentGame({
-      ...currentGame,
-      clues: [...currentGame.clues, { type: '', text: '' }]
-    });
-  };
 
-  const handleRemoveClue = (index: number) => {
-    if (!currentGame) return;
-    const newClues = currentGame.clues.filter((_, i) => i !== index);
-    setCurrentGame({
-      ...currentGame,
-      clues: newClues
-    });
-  };
+  
 
   const handleClueChange = (index: number, field: 'type' | 'text', value: string) => {
     if (!currentGame) return;
@@ -126,68 +119,74 @@ const Admin: React.FC = () => {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!currentGame) return;
-    const newGames = new Map(games);
-    newGames.set(selectedDate, currentGame);
-    setGames(newGames);
-    setIsEditing(false);
+    
+    try {
+      // Convert Map to array for saving
+      const gamesArray = Array.from(games.values());
+      
+      const response = await fetch('/api/updatePoems', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: gamesArray })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to save games');
+      }
+  
+      const newGames = new Map(games);
+      newGames.set(selectedDate, currentGame);
+      setGames(newGames);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Failed to save game. Please try again.');
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this game?")) {
-      const newGames = new Map(games);
-      newGames.delete(selectedDate);
-      setGames(newGames);
-      setCurrentGame(null);
+      try {
+        // Remove the current game and convert remaining games to array
+        const newGames = new Map(games);
+        newGames.delete(selectedDate);
+        const gamesArray = Array.from(newGames.values());
+  
+        const response = await fetch('/api/updatePoems', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: gamesArray })
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to delete game');
+        }
+  
+        setGames(newGames);
+        setCurrentGame(null);
+        setSelectedDate('');
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete game. Please try again.');
+      }
     }
   };
   
   return (
     <main className="p-4 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Game Admin Panel</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
 
-      <div className="mb-6 flex items-center justify-between">
-        <button
-          onClick={handlePrevMonth}
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          Previous Month
-        </button>
-        <h2 className="text-xl font-semibold">
-          {new Date(currentYear, currentMonth).toLocaleString('default', {
-            month: 'long',
-          })}{' '}
-          {currentYear}
-        </h2>
-        <button
-          onClick={handleNextMonth}
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          Next Month
-        </button>
-      </div>
-
-      <div className="mb-6 grid grid-cols-7 gap-2">
-        {Array.from(
-          { length: getDaysInMonth(currentMonth, currentYear) },
-          (_, i) => {
-            const day = i + 1;
-            const date = formatDate(currentYear, currentMonth, day);
-            return (
-              <button
-                key={date}
-                className={`p-2 rounded ${
-                  isDateHighlighted(date) ? 'bg-teal-500 text-white' : 'bg-gray-200'
-                } ${selectedDate === date ? 'ring-2 ring-teal-700' : ''}`}
-                onClick={() => handleDateSelect(date)}
-              >
-                {day}
-              </button>
-            );
-          }
-        )}
-      </div>
+      <Calendar
+        onDateSelect={handleDateSelect}
+        selectedDate={selectedDate}
+        highlightedDates={new Set(games.keys())}
+      />
 
       {selectedDate && currentGame && (
         <div className="mt-4 border rounded-lg p-6 bg-white shadow">
@@ -200,13 +199,13 @@ const Admin: React.FC = () => {
                 <>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-4 py-2 bg-[var(--b3)] text-white rounded hover:brightness-90"
                   >
                     Edit
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="px-4 py-2 bg-[var(--r3)] text-white rounded hover:brightness-90"
                   >
                     Delete
                   </button>
@@ -216,7 +215,7 @@ const Admin: React.FC = () => {
                 <>
                   <button
                     onClick={handleSave}
-                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    className="px-4 py-2 bg-green-400 text-white rounded hover:brightness-90"
                   >
                     Save
                   </button>
@@ -225,7 +224,7 @@ const Admin: React.FC = () => {
                       setIsEditing(false);
                       handleDateSelect(selectedDate);
                     }}
-                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    className="px-4 py-2 bg-[var(--y3)] text-white rounded hover:brightness-90"
                   >
                     Cancel
                   </button>
@@ -236,45 +235,72 @@ const Admin: React.FC = () => {
 
           {isEditing ? (
             <div className="space-y-4 ">
-              <div>
-                <label className="block mb-2">Title:</label>
-                <input
-                  type="text"
-                  value={currentGame.poem.title}
-                  onChange={(e) => handlePoemChange('title', e.target.value)}
-                  className="w-full p-2 border rounded"
-                />
+              <div className='flex space-x-4'>
+                <div className='w-full'>
+                  <label className="block mb-2">Title:</label>
+                  <input
+                    type="text"
+                    value={currentGame.poem.title}
+                    onChange={(e) => handlePoemChange('title', e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className='w-full'>
+                  <label className="block mb-2">Author:</label>
+                  <input
+                    type="text"
+                    value={currentGame.poem.author}
+                    onChange={(e) => handlePoemChange('author', e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className='w-full'>
+                  <label className="block mb-2">Date Written:</label>
+                  <input
+                    type="text"
+                    value={currentGame.poem.date}
+                    onChange={(e) => handlePoemChange('date', e.target.value)}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
               </div>
               <div>
-                <label className="block mb-2">Author:</label>
-                <input
-                  type="text"
-                  value={currentGame.poem.author}
-                  onChange={(e) => handlePoemChange('author', e.target.value)}
-                  className="w-full p-2 border rounded"
-                />
+                <label className="block mb-2">Poem Lines (/hidden/ word, *bold* word):</label>
+                <div className="relative">
+                  <div className="absolute right-0 top-0 mt-1 mr-1 space-x-1">
+                    <button 
+                      onClick={() => formatSelectedText('*')} 
+                      className="bg-blue-100 px-2 py-1 rounded text-xs"
+                      title="Surround with *"
+                    >
+                      *
+                    </button>
+                    <button 
+                      onClick={() => formatSelectedText('/')} 
+                      className="bg-blue-100 px-2 py-1 rounded text-xs"
+                      title="Surround with /"
+                    >
+                      /
+                    </button>
+                    <button 
+                      onClick={setDisplayRangeFromSelection} 
+                      className="bg-green-100 px-2 py-1 rounded text-xs"
+                      title="Set Display Range"
+                    >
+                      Set Range
+                    </button>
+                  </div>
+                  <textarea
+                    ref={textareaRef}
+                    value={currentGame.poem.lines.join('\n')}
+                    onChange={(e) => handlePoemChange('lines', e.target.value.split('\n'))}
+                    className="w-full p-2 border rounded"
+                    rows={5}
+                  />
+                </div>
               </div>
               <div>
-                <label className="block mb-2">Date Written:</label>
-                <input
-                  type="text"
-                  value={currentGame.poem.date}
-                  onChange={(e) => handlePoemChange('date', e.target.value)}
-                  className="w-full p-2 border rounded"
-                  placeholder="e.g. 1980"
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Poem Lines (one per line):</label>
-                <textarea
-                  value={currentGame.poem.lines.join('\n')}
-                  onChange={(e) => handlePoemChange('lines', e.target.value.split('\n'))}
-                  className="w-full p-2 border rounded"
-                  rows={5}
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Display Range:</label>
+                <label className="block mb-2">Display Range (starting from 0):</label>
                 <div className="flex space-x-2">
                   <input
                     type="number"
@@ -311,52 +337,21 @@ const Admin: React.FC = () => {
                       placeholder="Text"
                       className="w-2/3 p-2 border rounded"
                     />
-                    <button
-                      onClick={() => handleRemoveClue(index)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      ×
-                    </button>
+
                   </div>
                 ))}
-                <button
-                  onClick={handleAddClue}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Add Clue
-                </button>
+
               </div>
             </div>
           ) : (
             <div className="space-y-4">
+              <p className='text-xl italic'>
+                {currentGame.poem.title} by {currentGame.poem.author} ({currentGame.poem.date})
+              </p>
               <div>
-                <strong>Title:</strong> {currentGame.poem.title}
-              </div>
-              <div>
-                <strong>Author:</strong> {currentGame.poem.author}
-              </div>
-              <div>
-                <strong>Date Written:</strong> {currentGame.poem.date}
-              </div>
-              <div>
-                <strong>Lines:</strong>
-                <pre className="mt-2 p-2 bg-gray-100 rounded">
-                  {currentGame.poem.lines.join('\n')}
-                </pre>
-              </div>
-              <div>
-                <strong>Display Range:</strong> {currentGame.poem.displayRange[0]} to{' '}
-                {currentGame.poem.displayRange[1]}
-              </div>
-              <div>
-                <strong>Clues:</strong>
-                <ul className="mt-2 space-y-2">
-                  {currentGame.clues.map((clue, index) => (
-                    <li key={index}>
-                      <strong>{clue.type}:</strong> {clue.text}
-                    </li>
-                  ))}
-                </ul>
+                <p className="whitespace-pre-wrap">
+                  {parseLine(currentGame.poem.lines.join('\n'), true)}
+                </p>
               </div>
             </div>
           )}
@@ -366,4 +361,3 @@ const Admin: React.FC = () => {
   );
 };
 
-export default Admin;
