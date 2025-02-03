@@ -19,7 +19,7 @@ export default async function Home() {
   const poemNumber = sortedIds.indexOf(todaysGame.id) + 1;
 
   return (
-    <main className="relative overflow-hidden min-h-screen">
+    <main className="relative overflow-hidden">
       {/*<Header />*/}
       <InfoModal />
       <div className='welcome text-center justify-center py-4'>
