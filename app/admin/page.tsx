@@ -123,7 +123,10 @@ export default function Admin() {
     if (!currentGame) return;
     
     try {
-      // Convert Map to array for saving
+      const newGames = new Map(games);
+      newGames.set(selectedDate, currentGame);
+      setGames(newGames);
+      
       const gamesArray = Array.from(games.values());
       
       const response = await fetch('/api/updatePoems', {
@@ -138,9 +141,7 @@ export default function Admin() {
         throw new Error('Failed to save games');
       }
   
-      const newGames = new Map(games);
-      newGames.set(selectedDate, currentGame);
-      setGames(newGames);
+
       setIsEditing(false);
     } catch (error) {
       console.error('Save error:', error);
