@@ -92,7 +92,7 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
           style={{
             height: '100svh', // Fill the entire viewport height
             top: 0,
@@ -109,7 +109,7 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
               alt="Couple It Quill" 
               width={223} 
               height={329}
-              className='w-8 h-12 mx-auto'
+              className='w-8 h-12 mx-auto hover:cursor-pointer'
               onClick={() => setShowGame(false)}
             />
 

@@ -15,7 +15,9 @@ export default function Admin() {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const response = await fetch('https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json');
+      const response = await fetch("https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json", {
+        cache: "no-store", 
+      });
       const data: GameData[] = await response.json();
       const gamesMap = new Map();
       data.forEach(game => gamesMap.set(game.id, game));
