@@ -125,9 +125,8 @@ export default function Admin() {
     try {
       const newGames = new Map(games);
       newGames.set(selectedDate, currentGame);
-      setGames(newGames);
-      
-      const gamesArray = Array.from(games.values());
+
+      const gamesArray = Array.from(newGames.values());
       
       const response = await fetch('/api/updatePoems', {
         method: 'POST',
@@ -141,7 +140,7 @@ export default function Admin() {
         throw new Error('Failed to save games');
       }
   
-
+      setGames(newGames);
       setIsEditing(false);
     } catch (error) {
       console.error('Save error:', error);
