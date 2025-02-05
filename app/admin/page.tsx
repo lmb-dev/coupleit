@@ -153,7 +153,6 @@ export default function Admin() {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this game?")) {
       try {
-        // Remove the current game and convert remaining games to array
         const newGames = new Map(games);
         newGames.delete(selectedDate);
         const gamesArray = Array.from(newGames.values());
@@ -267,7 +266,7 @@ export default function Admin() {
                 </div>
               </div>
               <div>
-                <label className="block mb-2">Poem Lines (/hidden/ word, *bold* word):</label>
+                <label className="block mb-2">Poem:</label>
                 <div className="relative">
                   <div className="absolute right-0 top-0 mt-1 mr-1 space-x-1">
                     <button 

@@ -42,15 +42,26 @@ export default function InfoModal() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="bg-white p-4 rounded-lg max-w-lg w-5/6 relative"
+            className="bg-[var(--b1)] rounded-lg max-w-lg relative"
           >
-            <h2 className="text-2xl font-bold mb-4">Info</h2>
-            <div className="space-y-4">
-              <p>lorem ipsum</p>
+            <h2 className="text-4xl font-bold merienda text-center p-4">How to Play</h2>
+            
+            <ul className="b-section space-y-4 mb-4">
+              <li>📜 <strong>Read the Poem:</strong> A word is missing—can you find it?</li>
+              <li>🔍 <strong>Find the Rhyme:</strong> A <strong>bolded word</strong> gives you a hint.</li>
+              <li>🎯 <strong>Make Your Guess:</strong> Type in the missing word and submit.</li>
+              <li>💡 <strong>Unlock Hints:</strong> Every wrong guess reveals a clue.</li>
+              <li>🏆 <strong>Win the Round:</strong> Keep going until you find the perfect fit!</li>
+            </ul>
+
+            <div className="text-sm my-4 text-center">          
+              <p>Edited by James Haikney</p>
+              <p>Developed by Louis Bodfield</p>
             </div>
-            <div className="absolute top-4 right-4">
-              <button onClick={() => setShowInfoModal(false)} className="text-gray-400">
-                <ImCross />
+
+            <div className="flex justify-center absolute top-4 right-4  space-x-4">
+              <button onClick={() => setShowInfoModal(false)} className="text-gray-800">
+                <ImCross/>
               </button>
             </div>
           </motion.div>

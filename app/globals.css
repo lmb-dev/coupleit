@@ -83,6 +83,11 @@ header{
   padding: 1rem;
 }
 
+.b-section{
+  background-color: var(--b2);
+  border-bottom: 8px solid var(--b3);
+  padding: 1rem;
+}
 
 
 

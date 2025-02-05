@@ -97,17 +97,16 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           exit={{ opacity: 0, scale: 0.8 }}
           className="bg-[var(--g1)] rounded-xl max-w-lg w-full relative py-8"
         >
-          <h2 className="text-4xl font-bold mb-4 merienda text-center">You Coupled It!</h2>
-          <p className='merienda'>Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
-          <p className='text-4xl'>{guessesEmojis}</p>
-          <p>Good work! You used {guessesUsed} {guessesUsed === 1 ? 'guess' : 'guesses'}</p>
           
-          <div 
-            className="my-6 rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black"
-            onClick={handleCopyText}
-          >
-            <ImCopy className="mr-2" />
-            <span>{copyStatus}</span>
+          <h2 className="text-4xl font-bold merienda text-center">You Coupled It!</h2>
+          <div className='space-y-2 my-6'>
+            <p className='merienda'>Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
+            <p className='text-4xl'>{guessesEmojis}</p>
+            <p>Good work! You used {guessesUsed} {guessesUsed === 1 ? 'guess' : 'guesses'}</p>
+            <div onClick={handleCopyText} className=" rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black">
+              <ImCopy className="mr-2" />
+              <span>{copyStatus}</span>
+            </div>          
           </div>
 
           <div className="mb-6 g-section">
