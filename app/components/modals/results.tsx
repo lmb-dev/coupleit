@@ -18,6 +18,8 @@ interface ResultsModalProps {
 export default function ResultsModal({showResultsModal, setShowResultsModal, guessedWords, todaysGame, poemNumber}: ResultsModalProps) {
   const [copyStatus, setCopyStatus] = useState<string>("Share Your Result");
   const [timeRemaining, setTimeRemaining] = useState<string>("");
+  const [isExpanded, setIsExpanded] = useState(false);
+
 
   const guessesUsed = guessedWords.length;
   const maxGuesses = 4;
@@ -30,15 +32,8 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
 
   // Copy results to clipboard
   const handleCopyText = () => {
-    const poemLines = todaysGame?.poem.lines
-    .slice(todaysGame.poem.displayRange[0], todaysGame.poem.displayRange[1] + 1) // Slice based on displayRange
-    .map(line => 
-      line
-        .replace(/\/.*?\//g, '____') // Replace text between / with ____
-        .replace(/\*/g, '')          // Hide asterisks
-    )
-    .join('\n') || '';
-    const textToCopy = `You Coupled It!\nCouple It #${String(poemNumber).padStart(3, "0")} / ${formatDateFromId(todaysGame?.id)}\n${guessesEmojis}\nGood work! You used ${guessesUsed} ${guessesUsed === 1 ? 'guess' : 'guesses'}\n\n${poemLines}`;
+
+    const textToCopy = `Couple It #${String(poemNumber).padStart(3, "0")} / ${formatDateFromId(todaysGame?.id)}\n${todaysGame?.poem.title} - ${todaysGame?.poem.author}\n${guessesEmojis}\ncoupleit.com`;
     
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopyStatus("Copied!");
@@ -95,24 +90,30 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="bg-[var(--g1)] rounded-xl max-w-lg w-full relative py-8"
+          className="bg-[var(--g1)] rounded-xl max-w-lg w-full relative py-8 max-h-[90vh] overflow-y-auto"
         >
-          
           <h2 className="text-4xl font-bold merienda text-center">You Coupled It!</h2>
-          <div className='space-y-2 my-6'>
-            <p className='merienda'>Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
-            <p className='text-4xl'>{guessesEmojis}</p>
+
+          <div className="space-y-2 my-6">
+            <p className="merienda">Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
+            <p className="text-4xl">{guessesEmojis}</p>
             <p>Good work! You used {guessesUsed} {guessesUsed === 1 ? 'guess' : 'guesses'}</p>
-            <div onClick={handleCopyText} className=" rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black">
+            
+            <div onClick={handleCopyText} className="rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black">
               <ImCopy className="mr-2" />
               <span>{copyStatus}</span>
             </div>          
           </div>
 
-          <div className="mb-6 g-section">
-            <div className="text-left max-h-24 overflow-y-auto">
+          {/* Clickable Poem Section */}
+          <div className="mb-6 cursor-pointer g-section" onClick={() => setIsExpanded(!isExpanded)}>
+            <div 
+              className={`text-left whitespace-pre-wrap ${
+                isExpanded ? "max-h-full" : "max-h-24 overflow-hidden"
+              }`}
+            >
               {todaysGame?.poem.lines.map((line, index) => (
-                <p key={index}>{parseLine(line, true)}</p>
+                line === "" ? <br key={index} /> : <p key={index}>{parseLine(line, true)}</p>
               ))}
             </div>
             <h3 className="text-sm text-right mt-2 merienda">
@@ -120,12 +121,13 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
             </h3>
           </div>
 
+
           <div className="text-center mt-6">
             <h3 className="text-xl">Next Poem In:</h3>
             <p className="text-2xl font-bold">{timeRemaining}</p>
           </div>
 
-          <div className="flex justify-center absolute top-4 right-4  space-x-4">
+          <div className="flex justify-center absolute top-4 right-4 space-x-4">
             <button onClick={() => setShowResultsModal(false)} className="text-gray-800">
               <ImCross/>
             </button>

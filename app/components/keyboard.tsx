@@ -11,7 +11,7 @@ export default function Keyboard({ isGameOver, handleKeyPress }: KeyboardProps) 
   ];
 
   return (
-    <div className="space-y-1 max-w-xl mx-auto px-4 ">
+    <div className=" max-w-xl mx-auto space-y-1 px-2">
       {rows.map((row, rowIndex) => (
 
         <div className={`keyboard flex gap-1 ${rowIndex === 1 ? 'px-[clamp(12px,2vw,24px)]' : ''}`}key={rowIndex}>

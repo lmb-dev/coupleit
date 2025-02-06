@@ -12,6 +12,7 @@ interface HintsProps {
 export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps) {
   return (
     <div className="flex justify-center space-x-8 mt-6">
+      
       {/* Left Side - Guessed Words */}
       <div className="flex flex-col space-y-2">
         {[0, 1, 2].map((index) => {
@@ -20,8 +21,7 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
             <div
               key={index}
               className={`w-24 h-8 flex items-center justify-center rounded-full text-sm font-semibold 
-                ${guess ? (guess.status === "correct" ? "bg-[var(--g1)] text-black" : "bg-[var(--r1)] text-black") : "bg-[#ccc3b4]"}
-              `}
+                ${guess ? (guess.status === "correct" ? "bg-[var(--g1)] text-black" : "bg-[var(--r1)] text-black") : "bg-[#ccc3b4]"}`}
             >
               {guess ? (
                 <>

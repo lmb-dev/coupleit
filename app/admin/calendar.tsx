@@ -7,7 +7,7 @@ interface CalendarProps {
   highlightedDates: Set<string>;
 }
 
-export default function Calendar({onDateSelect, selectedDate, highlightedDates}: CalendarProps) {
+export default function Calendar({ onDateSelect, selectedDate, highlightedDates }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
 
@@ -37,6 +37,12 @@ export default function Calendar({onDateSelect, selectedDate, highlightedDates}:
     return new Date(year, month + 1, 0).getDate();
   };
 
+  const getFirstDayOfMonth = (month: number, year: number): number => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -51,16 +57,25 @@ export default function Calendar({onDateSelect, selectedDate, highlightedDates}:
         </button>
       </div>
 
-      <div className="mb-6 grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 text-center font-semibold">
+        {weekdays.map((day) => (
+          <div key={day} className="py-2">{day}</div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-2">
+        {Array.from({ length: getFirstDayOfMonth(currentMonth, currentYear) }, (_, i) => (
+          <div key={`empty-${i}`} className="p-2"></div>
+        ))}
         {Array.from({ length: getDaysInMonth(currentMonth, currentYear) }, (_, i) => {
           const day = i + 1;
           const date = formatDate(currentYear, currentMonth, day);
           return (
             <button
               key={date}
-              className={`p-2 rounded ${
-                highlightedDates.has(date) ? 'bg-[var(--b2)]' : 'bg-gray-200'
-              } ${selectedDate === date ? 'ring-2 ring-[var(--b3)]' : ''}`}
+              className={`p-2 rounded text-center transition-all 
+                ${highlightedDates.has(date) ? 'bg-[var(--b2)]' : 'bg-gray-200'}
+                ${selectedDate === date ? 'ring-2 ring-[var(--b3)]' : ''}`}
               onClick={() => onDateSelect(date)}
             >
               {day}
@@ -70,5 +85,4 @@ export default function Calendar({onDateSelect, selectedDate, highlightedDates}:
       </div>
     </div>
   );
-};
-
+}

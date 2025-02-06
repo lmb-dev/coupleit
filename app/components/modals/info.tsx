@@ -28,7 +28,7 @@ export default function InfoModal() {
     <>
       {/* Question Mark Icon Button */}
       <button
-        className="fixed top-2 right-2 z-20  hover:text-gray-700 text-3xl"
+        className="fixed top-2 left-2 z-20  hover:text-gray-700 text-3xl"
         onClick={() => setShowInfoModal(true)}
       >
         <HiQuestionMarkCircle />
@@ -42,7 +42,7 @@ export default function InfoModal() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="bg-[var(--b1)] rounded-lg max-w-lg relative"
+            className="bg-[var(--b1)] rounded-xl max-w-lg w-full relative py-8 max-h-[90vh] overflow-y-auto"
           >
             <h2 className="text-4xl font-bold merienda text-center p-4">How to Play</h2>
             
