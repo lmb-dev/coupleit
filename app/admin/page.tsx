@@ -1,4 +1,6 @@
 'use client'
+export const runtime = 'edge';
+
 import React, { useState, useEffect, useRef } from 'react';
 import Calendar from './calendar';
 import { parseLine } from '../utils/parseLine';
