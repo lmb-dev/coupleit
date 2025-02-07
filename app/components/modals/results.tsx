@@ -90,7 +90,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="bg-[var(--g1)] rounded-xl max-w-lg w-full relative py-8 max-h-[90vh] overflow-y-auto"
+          className="bg-[var(--g1)] rounded-xl max-w-lg text-center w-full relative py-8 max-h-[90vh] overflow-y-auto"
         >
           <h2 className="text-4xl font-bold merienda text-center">You Coupled It!</h2>
 

@@ -28,7 +28,7 @@ export default function InfoModal() {
     <>
       {/* Question Mark Icon Button */}
       <button
-        className="fixed top-2 left-2 z-20  hover:text-gray-700 text-3xl"
+        className="fixed top-2 left-2 z-50  hover:text-gray-700 text-3xl"
         onClick={() => setShowInfoModal(true)}
       >
         <HiQuestionMarkCircle />
@@ -36,7 +36,7 @@ export default function InfoModal() {
 
       {/* Modal */}
       {showInfoModal && (
-        <div className="fixed inset-0 z-20  flex justify-center items-center bg-gray-900 bg-opacity-50">
+        <div className="fixed inset-0 z-50  flex justify-center items-center bg-gray-900 bg-opacity-50">
           <motion.div
             ref={popupRef}
             initial={{ opacity: 0, scale: 0.8 }}

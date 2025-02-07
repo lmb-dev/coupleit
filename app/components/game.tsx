@@ -6,19 +6,18 @@ import Hints from './hints';
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface GameProps {
   todaysGame: GameData;
   poemNumber: number;
+  setGameStarted: React.Dispatch<React.SetStateAction<boolean>>; // Receive setter
 }
 
-export default function Game({ todaysGame, poemNumber }: GameProps) {
+export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {
   const { guessedWords, setGuessedWords } = useGameState(todaysGame.id);
   
   const [guess, setGuess] = useState('');
   const [showResultsModal, setShowResultsModal] = useState(false);
-  const [showGame, setShowGame] = useState<boolean>(false);
 
   const isGameOver = guessedWords.some(({ status }) => status === 'correct') || guessedWords.length >= 4;
 
@@ -64,83 +63,52 @@ export default function Game({ todaysGame, poemNumber }: GameProps) {
     };
   }, [handleKeyPress]);
 
-  useEffect(() => {
-    if (showGame) {
-      document.body.style.overflow = 'hidden';  // Disable scrolling on the body
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = ''; 
-    };
-  }, [showGame]);
-
   return (
     <section>
-      <button
-        onClick={() => setShowGame((prev) => !prev)}
-        className="text-2xl text-white bg-black px-16 py-2 rounded-full max-w-xs mx-auto"
-        disabled={showGame}
-      >
-        Play
-      </button>
+      <div className="bg-[var(--y1)] flex-grow min-h-screen overflow-auto py-2">
+        <Image 
+          src="/coupleitquill1.webp" 
+          alt="Couple It Quill" 
+          width={223} 
+          height={329}
+          className='w-8 h-12 mx-auto hover:cursor-pointer'
+          onClick={() => setGameStarted(false)} // Set gameStarted to false, bringing back the intro screen
+        />
 
-      <AnimatePresence>
-        {showGame && (
-          <motion.div
-            className="fixed top-0 left-0 right-0 z-10 h-[100dvh] bg-black bg-opacity-80 flex flex-col"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-          >
-            <div className="bg-[var(--y1)] flex-grow overflow-auto py-2">
-              <Image 
-                src="/coupleitquill1.webp" 
-                alt="Couple It Quill" 
-                width={223} 
-                height={329}
-                className='w-8 h-12 mx-auto hover:cursor-pointer'
-                onClick={() => setShowGame(false)}
-              />
+        <div className="my-2 y-section text-lg text-left">
+          {todaysGame.poem.lines
+            .slice(todaysGame.poem.displayRange[0], todaysGame.poem.displayRange[1] + 1)
+            .map((line, index) => (
+              <p key={index} className='lg:px-[33vw]'>
+                {parseLine(line, false, isGameOver ? guessedWords[guessedWords.length - 1].word : guess)}
+              </p>
+            ))}
+          
+          <p className="merienda text-right text-sm mt-4 lg:px-[33vw]">
+            {todaysGame.poem.title} - {todaysGame.poem.author}
+          </p>
+        </div>
 
-              <div className="my-2 y-section text-lg text-left">
-                {todaysGame.poem.lines
-                  .slice(todaysGame.poem.displayRange[0], todaysGame.poem.displayRange[1] + 1)
-                  .map((line, index) => (
-                    <p key={index} className='lg:px-[33vw]'>
-                      {parseLine(line, false, isGameOver ? guessedWords[guessedWords.length - 1].word : guess)}
-                    </p>
-                  ))}
-                
-                <p className="merienda text-right text-sm mt-4 lg:px-[33vw]">
-                  {todaysGame.poem.title} - {todaysGame.poem.author}
-                </p>
-              </div>
+        <div className="border-b-4 p-2 border-black my-12 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
+          {guess || (isGameOver ? (
+            <button onClick={() => setShowResultsModal(true)} className="font-bold">
+              VIEW RESULTS
+            </button>
+          ) : '\u00A0')}
+        </div>
 
-              <div className="border-b-4 p-2 border-black my-12 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
-                {guess || (isGameOver ? (
-                  <button onClick={() => setShowResultsModal(true)} className="font-bold">
-                    VIEW RESULTS
-                  </button>
-                ) : '\u00A0')}
-              </div>
+        <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
 
-              <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
+        <Hints clues={todaysGame.clues} unlockedClues={todaysGame.clues.slice(0, guessedWords.filter(({ status }) => status !== "correct").length)} guessedWords={guessedWords.filter(({ status }) => status !== "correct")}/>
+      </div>
 
-              <Hints clues={todaysGame.clues} unlockedClues={todaysGame.clues.slice(0, guessedWords.filter(({ status }) => status !== "correct").length)} guessedWords={guessedWords.filter(({ status }) => status !== "correct")}/>
-            </div>
-
-            <ResultsModal
-                showResultsModal={showResultsModal}
-                setShowResultsModal={setShowResultsModal}
-                guessedWords={guessedWords}
-                todaysGame={todaysGame}
-                poemNumber={poemNumber}
-              />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ResultsModal
+        showResultsModal={showResultsModal}
+        setShowResultsModal={setShowResultsModal}
+        guessedWords={guessedWords}
+        todaysGame={todaysGame}
+        poemNumber={poemNumber}
+      />
     </section>
   );
 }

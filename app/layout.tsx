@@ -34,9 +34,9 @@ const fetchDynamicDescription = async (): Promise<string> => {
   const poems: GameData[] = await response.json();
   
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');  
-  const todayPoem = poems.find(poem => poem.id === today);
-  return todayPoem 
-    ? `Guess the rhyming word in today's poem: "${todayPoem.poem.title}" by ${todayPoem.poem.author}`
+  const todaysGame = poems.find(poem => poem.id === today);
+  return todaysGame 
+    ? `Guess the rhyming word in today's poem: "${todaysGame.poem.title}" by ${todaysGame.poem.author}`
     : "Guess today's rhyming word!";
 };
 //#endregion

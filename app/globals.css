@@ -42,30 +42,6 @@ body {
 
 
 
-header{
-  color: var(--tx2);
-  font-size: clamp(16px, 1vw, 1vw);
-  font-weight: 600;
-  background-color: var(--tx1);
-
-  height: 36px;
-  padding: 0px clamp(5px, 8vw, 20px); 
-  align-items: center;
-  position: absolute;
-  width: 100%;
-  z-index: 40;
-}
-
-
-.welcome {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--r1);
-  text-align: center;
-  justify-content: center;
-}
-
 
 .r-section{
   background-color: var(--r2);
