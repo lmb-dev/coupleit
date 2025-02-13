@@ -23,6 +23,8 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
 
   const guessesUsed = guessedWords.length;
   const maxGuesses = 4;
+  const hasCorrectGuess = guessedWords.some(guess => guess.status === 'correct');
+
 
   // Generate guesses as emojis
   const guessesEmojis = Array.from({ length: maxGuesses }, (_, i) => {
@@ -90,14 +92,14 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="bg-[var(--g1)] rounded-xl max-w-lg text-center w-full relative py-8 max-h-[90vh] overflow-y-auto"
+          className={`bg-[${hasCorrectGuess ? 'var(--g1)' : 'var(--r1)'}] rounded-xl max-w-lg text-center w-full relative py-8 max-h-[90vh] overflow-y-auto`}
         >
-          <h2 className="text-4xl font-bold merienda text-center">You Coupled It!</h2>
+          <h2 className="text-4xl font-bold merienda text-center">{hasCorrectGuess ? "You Coupled It!" : "Bad luck!"}</h2>
 
           <div className="space-y-2 my-6">
             <p className="merienda">Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
             <p className="text-4xl">{guessesEmojis}</p>
-            <p>Good work! You used {guessesUsed} {guessesUsed === 1 ? 'guess' : 'guesses'}</p>
+            <p>{hasCorrectGuess ? `Good work! You used ${guessesUsed} ${guessesUsed === 1 ? 'guess' : 'guesses'}` : "Today you didn't couple it in 4 guesses"}</p>
             
             <div onClick={handleCopyText} className="rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black">
               <ImCopy className="mr-2" />
@@ -106,7 +108,10 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           </div>
 
           {/* Clickable Poem Section */}
-          <div className="mb-6 cursor-pointer g-section" onClick={() => setIsExpanded(!isExpanded)}>
+          <div className={`mb-6 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'} `} onClick={() => setIsExpanded(!isExpanded)}>
+            <h3 className="text-sm text-right mt-2 merienda">
+              {todaysGame?.poem.title} - {todaysGame?.poem.author}
+            </h3>            
             <div 
               className={`text-left whitespace-pre-wrap ${
                 isExpanded ? "max-h-full" : "max-h-24 overflow-hidden"
@@ -116,9 +121,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
                 line === "" ? <br key={index} /> : <p key={index}>{parseLine(line, true)}</p>
               ))}
             </div>
-            <h3 className="text-sm text-right mt-2 merienda">
-              {todaysGame?.poem.title} - {todaysGame?.poem.author}
-            </h3>
+            <p className='mt-2 italic text-xs'>Click to expand</p>
           </div>
 
 

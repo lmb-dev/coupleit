@@ -86,4 +86,5 @@ body {
 
 *{
   scrollbar-width: thin; 
+  scrollbar-color: var(--y1) var(--tx1); 
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { IoLockClosed } from "react-icons/io5";
 import Image from "next/image";
-import { ImCross, ImCheckmark, ImMusic } from "react-icons/im";
+import { ImCross, ImCheckmark } from "react-icons/im";
 
 interface HintsProps {
   clues: { type: string; text: string }[];
@@ -20,22 +20,25 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
           return (
             <div
               key={index}
-              className={`w-24 h-8 flex items-center justify-center rounded-full text-sm font-semibold 
+              className={`w-24 h-8 flex items-center rounded-full font-semibold 
                 ${guess ? (guess.status === "correct" ? "bg-[var(--g1)] text-black" : "bg-[var(--r1)] text-black") : "bg-[#ccc3b4]"}`}
             >
               {guess ? (
                 <>
-                  {guess.status === "correct" && <ImCheckmark className="mr-2 text-[var(--g3)]"/>}
-                  {guess.status === "incorrect" && <ImCross className="mr-2 text-[var(--r3)]" />}
-                  {guess.word}
+                  {guess.status === "correct" && <ImCheckmark className="mx-2 text-[var(--g3)] text-xs flex-shrink-0" />}
+                  {guess.status === "incorrect" && <ImCross className="mx-2 text-[var(--r3)] text-xs flex-shrink-0" />}
+                  <span className="truncate font-semibold">
+                    {guess.word}
+                  </span>
                 </>
               ) : (
-                <Image src="/coupleitquill2.webp" alt="Placeholder" width={223} height={329} className="w-4 h-6"/>
+                <Image src="/coupleitquill2.webp" alt="Placeholder" width={223} height={329} className="w-4 h-6 mx-auto" />
               )}
             </div>
           );
         })}
       </div>
+
       
       {/* Right Side - Hints */}
       <div className="flex flex-col space-y-2">
