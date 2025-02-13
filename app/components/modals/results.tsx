@@ -99,7 +99,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           <div className="space-y-2 my-6">
             <p className="merienda">Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
             <p className="text-4xl">{guessesEmojis}</p>
-            <p>{hasCorrectGuess ? `Good work! You used ${guessesUsed} ${guessesUsed === 1 ? 'guess' : 'guesses'}` : "Today you didn't couple it in 4 guesses"}</p>
+            <p>{hasCorrectGuess ? `Good work! You used ${guessesUsed} ${guessesUsed === 1 ? 'guess' : 'guesses'}` : "You failed to guess the rhyming word today."}</p>
             
             <div onClick={handleCopyText} className="rounded-full merienda justify-center flex items-center cursor-pointer text-xl p-2 max-w-72 mx-auto text-white bg-black">
               <ImCopy className="mr-2" />
@@ -108,21 +108,25 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           </div>
 
           {/* Clickable Poem Section */}
-          <div className={`mb-6 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'} `} onClick={() => setIsExpanded(!isExpanded)}>
+          <div 
+            className={`mb-6 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'}`} 
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
             <h3 className="text-sm text-right mt-2 merienda">
               {todaysGame?.poem.title} - {todaysGame?.poem.author}
             </h3>            
             <div 
-              className={`text-left whitespace-pre-wrap ${
-                isExpanded ? "max-h-full" : "max-h-24 overflow-hidden"
+              className={`text-left whitespace-pre-wrap transition-all ${
+                isExpanded ? "max-h-full" : "max-h-24 overflow-hidden fade-text"
               }`}
             >
               {todaysGame?.poem.lines.map((line, index) => (
                 line === "" ? <br key={index} /> : <p key={index}>{parseLine(line, true)}</p>
               ))}
             </div>
-            <p className='mt-2 italic text-xs'>Click to expand</p>
+            {!isExpanded && <p className='mt-4 text-xl'>...</p>}
           </div>
+
 
 
           <div className="text-center mt-6">

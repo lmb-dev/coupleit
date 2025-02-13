@@ -25,8 +25,8 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
             >
               {guess ? (
                 <>
-                  {guess.status === "correct" && <ImCheckmark className="mx-2 text-[var(--g3)] text-xs flex-shrink-0" />}
-                  {guess.status === "incorrect" && <ImCross className="mx-2 text-[var(--r3)] text-xs flex-shrink-0" />}
+                  {guess.status === "correct" && <ImCheckmark className="mx-3 text-[var(--g3)] text-xs flex-shrink-0" />}
+                  {guess.status === "incorrect" && <ImCross className="mx-3 text-[var(--r3)] text-xs flex-shrink-0" />}
                   <span className="truncate font-semibold">
                     {guess.word}
                   </span>

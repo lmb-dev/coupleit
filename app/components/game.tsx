@@ -32,18 +32,18 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     if (!guess || isGameOver) return;
 
     if (guess.length < 2) {
-      showError("Not a valid word.");
+      showError("Invalid Word");
       return;
     }
 
     if (guessedWords.some(({ word }) => word.toLowerCase() === guess.toLowerCase())) {
-      showError("You've already guessed this word.");
+      showError("Duplicate Guess");
       return;
     }
 
     const wordCheckResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess}`);
     if (!wordCheckResponse.ok) {
-      showError("Not a valid word.");
+      showError("Invalid Word");
       return;
     }
 
@@ -53,8 +53,6 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     const status: 'incorrect' | 'correct' = isCorrect ? 'correct' : 'incorrect';
     setGuessedWords((prev) => [...prev, { word: guess, status }]);
     setGuess('');
-
-    if (!isCorrect) showError("Incorrect guess. Try again!");
 
     if (isCorrect || guessedWords.length + 1 >= 4) {
       setShowResultsModal(true);
@@ -109,7 +107,17 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
           </p>
         </div>
 
-        <div className="border-b-4 p-2 border-black mt-12 mb-6 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
+        <div className="flex justify-center min-h-[40px]">
+          {errorMessage && (
+            <div className="bg-[var(--tx1)] text-[var(--tx2)] py-2 px-4 rounded-lg text-sm font-semibold inline-block text-center"> 
+              {errorMessage}
+            </div>
+          )}
+        </div>
+
+
+
+        <div className="border-b-4 p-2 border-black  mb-6 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
           {guess || (isGameOver ? (
             <button onClick={() => setShowResultsModal(true)} className="font-bold">
               VIEW RESULTS
@@ -121,13 +129,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
 
         <Hints clues={todaysGame.clues} unlockedClues={todaysGame.clues.slice(0, guessedWords.filter(({ status }) => status !== "correct").length)} guessedWords={guessedWords.filter(({ status }) => status !== "correct")}/>
       </div>
-
-
-      {errorMessage && (
-        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-[var(--r1)] text-[var(--tx1)] py-2 px-4 rounded-lg text-sm font-semibold text-center"> 
-          {errorMessage}
-        </div>
-      )}      
+   
 
       <ResultsModal
         showResultsModal={showResultsModal}
