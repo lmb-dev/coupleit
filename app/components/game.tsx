@@ -6,11 +6,12 @@ import Hints from './hints';
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 
 interface GameProps {
   todaysGame: GameData;
   poemNumber: number;
-  setGameStarted: React.Dispatch<React.SetStateAction<boolean>>; // Receive setter
+  setGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {
@@ -19,12 +20,18 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   const [guess, setGuess] = useState('');
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [animatingGuess, setAnimatingGuess] = useState<string | null>(null);
 
   const showError = (message: string) => {
     setErrorMessage(message);
-    setTimeout(() => setErrorMessage(null), 2000);
   };
-
+  
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => setErrorMessage(null), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
 
   const isGameOver = guessedWords.some(({ status }) => status === 'correct') || guessedWords.length >= 4;
 
@@ -50,9 +57,13 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     const correctWord = todaysGame?.poem.lines.join('\n').match(/\/(.+?)\//)?.[1];
     const isCorrect = guess.toLowerCase() === correctWord?.toLowerCase();
 
-    const status: 'incorrect' | 'correct' = isCorrect ? 'correct' : 'incorrect';
-    setGuessedWords((prev) => [...prev, { word: guess, status }]);
-    setGuess('');
+    if (!isCorrect) {
+      setAnimatingGuess(guess);
+      setGuess('');
+    } else {
+      setGuessedWords((prev) => [...prev, { word: guess, status: 'correct' }]);
+      setGuess('');
+    }
 
     if (isCorrect || guessedWords.length + 1 >= 4) {
       setShowResultsModal(true);
@@ -60,7 +71,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   };
 
   const handleKeyPress = (key: string) => {
-    if (isGameOver) return;
+    if (isGameOver || animatingGuess) return;
     if (key === 'Backspace') {
       setGuess((prev) => prev.slice(0, -1));
     } else if (key === 'Enter') {
@@ -81,6 +92,13 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     };
   }, [handleKeyPress]);
 
+  const handleAnimationComplete = () => {
+    if (animatingGuess) {
+      setGuessedWords((prev) => [...prev, { word: animatingGuess, status: 'incorrect' }]);
+      setAnimatingGuess(null);
+    }
+  };
+
   return (
     <section>
       <div className="bg-[var(--y1)] flex-grow min-h-screen overflow-auto py-2">
@@ -90,7 +108,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
           width={223} 
           height={329}
           className='w-8 h-12 mx-auto hover:cursor-pointer'
-          onClick={() => setGameStarted(false)} // Set gameStarted to false, bringing back the intro screen
+          onClick={() => setGameStarted(false)}
         />
 
         <div className="my-2 y-section text-lg text-left">
@@ -107,37 +125,41 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
           </p>
         </div>
 
-        <div className="flex justify-center min-h-[40px]">
-          {errorMessage && (
-            <div className="bg-[var(--tx1)] text-[var(--tx2)] py-2 px-4 rounded-lg text-sm font-semibold inline-block text-center"> 
-              {errorMessage}
+        <div className="border-b-4 p-2 border-black mb-6 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
+          {isGameOver ? (
+            <button onClick={() => setShowResultsModal(true)} className="font-bold">
+              VIEW RESULTS
+            </button>
+          ) : (
+            <div className="min-h-[1.5rem]">
+              {animatingGuess ? (
+                <motion.div
+                  initial={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: [1, 1, 0], x: [0, -10, 10, -10, 10, 0, 0] }}
+                  transition={{ times: [0, 0.4, 1], duration: 1.2 }}
+                  onAnimationComplete={handleAnimationComplete}
+                  className="relative"
+                >
+                  {animatingGuess}
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="absolute left-0 top-1/2 h-[2px] bg-black w-full origin-left"
+                  />
+                </motion.div>
+              ) : (
+                <span>{guess || '\u00A0'}</span>
+              )}
             </div>
           )}
         </div>
 
-
-
-        <div className="border-b-4 p-2 border-black  mb-6 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
-          {guess || (isGameOver ? (
-            <button onClick={() => setShowResultsModal(true)} className="font-bold">
-              VIEW RESULTS
-            </button>
-          ) : '\u00A0')}
-        </div>
-
         <Keyboard isGameOver={isGameOver} handleKeyPress={handleKeyPress} />
-
-        <Hints clues={todaysGame.clues} unlockedClues={todaysGame.clues.slice(0, guessedWords.filter(({ status }) => status !== "correct").length)} guessedWords={guessedWords.filter(({ status }) => status !== "correct")}/>
+        <Hints clues={todaysGame.clues} unlockedClues={todaysGame.clues.slice(0, guessedWords.filter(({ status }) => status !== "correct").length)} guessedWords={guessedWords.filter(({ status }) => status !== "correct")} />
       </div>
-   
 
-      <ResultsModal
-        showResultsModal={showResultsModal}
-        setShowResultsModal={setShowResultsModal}
-        guessedWords={guessedWords}
-        todaysGame={todaysGame}
-        poemNumber={poemNumber}
-      />
+      <ResultsModal showResultsModal={showResultsModal} setShowResultsModal={setShowResultsModal} guessedWords={guessedWords} todaysGame={todaysGame} poemNumber={poemNumber} />
     </section>
   );
 }
