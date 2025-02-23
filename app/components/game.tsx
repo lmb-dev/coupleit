@@ -6,7 +6,7 @@ import Hints from './hints';
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface GameProps {
   todaysGame: GameData;

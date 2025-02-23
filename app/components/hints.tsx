@@ -1,5 +1,5 @@
-import React from "react";
-import { IoLockClosed } from "react-icons/io5";
+import React, { useState } from "react";
+import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 import Image from "next/image";
 import { ImCross, ImCheckmark } from "react-icons/im";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,9 +11,10 @@ interface HintsProps {
 }
 
 export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps) {
+  const [hoveredHint, setHoveredHint] = useState<string | null>(null);
+
   return (
     <div className="flex justify-center space-x-8 mt-6">
-      
       {/* Left Side - Guessed Words */}
       <div className="flex flex-col space-y-2">
         {[0, 1, 2].map((index) => {
@@ -49,7 +50,7 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="truncate font-semibold"
+                      className="truncate font-semibold mr-2"
                     >
                       {guess.word}
                     </motion.span>
@@ -67,6 +68,8 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
       <div className="flex flex-col space-y-2">
         {clues.map((clue, index) => {
           const isUnlocked = unlockedClues.some((unlocked) => unlocked.text === clue.text);
+          const isHovered = hoveredHint === clue.text;
+
           return (
             <AnimatePresence key={index} mode="wait">
               <motion.div
@@ -83,16 +86,22 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
                 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 className={`w-36 h-8 flex items-center justify-center rounded-full text-sm font-semibold
-                  ${isUnlocked ? "bg-[var(--g1)] text-black" : "bg-black text-gray-300"}`}
+                  ${isUnlocked ? (isHovered ? "bg-black text-gray-300" : "bg-[var(--g1)] text-black cursor-pointer") : "bg-black text-gray-300"}`}
+                onMouseEnter={() => isUnlocked && setHoveredHint(clue.text)}
+                onMouseLeave={() => isUnlocked && setHoveredHint(null)}
+                onClick={() => isUnlocked && setHoveredHint(isHovered ? null : clue.text)}
               >
                 {isUnlocked ? (
-                  <motion.span
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {clue.text}
-                  </motion.span>
+                  <motion.div className="flex items-center">
+                    {isHovered ? <IoLockOpen className="mr-1" /> : null}
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      {isHovered ? clue.type : clue.text}
+                    </motion.span>
+                  </motion.div>
                 ) : (
                   <motion.div className="flex items-center">
                     <IoLockClosed className="mr-1" />
