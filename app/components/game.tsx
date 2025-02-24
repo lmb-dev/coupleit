@@ -28,7 +28,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   
   useEffect(() => {
     if (errorMessage) {
-      const timer = setTimeout(() => setErrorMessage(null), 1000);
+      const timer = setTimeout(() => setErrorMessage(null), 2000);
       return () => clearTimeout(timer);
     }
   }, [errorMessage]);
@@ -123,6 +123,14 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
           <p className="merienda text-right text-sm mt-4 lg:px-[33vw]">
             {todaysGame.poem.title} - {todaysGame.poem.author}
           </p>
+        </div>
+
+        <div className="flex justify-center min-h-[40px]">
+          {errorMessage && (
+            <div className="bg-[var(--tx1)] text-[var(--tx2)] py-2 px-4 rounded-lg text-sm font-semibold inline-block text-center"> 
+              {errorMessage}
+            </div>
+          )}
         </div>
 
         <div className="border-b-4 p-2 border-black mb-6 text-2xl text-center max-w-72 md:max-w-sm mx-auto">
