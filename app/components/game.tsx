@@ -111,7 +111,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
           onClick={() => setGameStarted(false)}
         />
 
-        <div className="my-2 y-section text-lg text-left">
+        <div className="my-2 y-section text-base lg:text-lg text-left">
           {todaysGame.poem.lines
             .slice(todaysGame.poem.displayRange[0], todaysGame.poem.displayRange[1] + 1)
             .map((line, index) => (
@@ -143,8 +143,8 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
               {animatingGuess ? (
                 <motion.div
                   initial={{ opacity: 1, x: 0 }}
-                  animate={{ opacity: [1, 1, 0], x: [0, -10, 10, -10, 10, 0, 0] }}
-                  transition={{ times: [0, 0.4, 1], duration: 1.2 }}
+                  animate={{ opacity: [1, 1, 0], x: [0, -5, 5, -5, 5, -3, 3, 0, 0] }}
+                  transition={{ times: [0, 0.4, 1], duration: 0.8 }}
                   onAnimationComplete={handleAnimationComplete}
                   className="relative"
                 >
@@ -152,7 +152,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.5, duration: 0.3 }}
+                    transition={{ delay: 0.4, duration: 0.2 }}
                     className="absolute left-0 top-1/2 h-[2px] bg-black w-full origin-left"
                   />
                 </motion.div>

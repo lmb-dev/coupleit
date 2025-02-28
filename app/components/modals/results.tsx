@@ -112,7 +112,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
             className={`mb-6 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'}`} 
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            <h3 className="text-sm text-left mt-2 font-bold">
+            <h3 className="text-lg text-left my-2 font-bold">
               {todaysGame?.poem.title} - {todaysGame?.poem.author}
             </h3>            
             <div 
