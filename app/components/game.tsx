@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Keyboard from './keyboard';
 import ResultsModal from './modals/results';
 import Hints from './hints';
+import { useAnalytics } from '../utils/analytics';
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
@@ -14,7 +15,9 @@ interface GameProps {
   setGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {
+export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {  
+  const { sendEvent } = useAnalytics(); 
+
   const { guessedWords, setGuessedWords } = useGameState(todaysGame.id);
   
   const [guess, setGuess] = useState('');
@@ -68,6 +71,12 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     if (isCorrect || guessedWords.length + 1 >= 4) {
       setShowResultsModal(true);
     }
+
+    sendEvent('game_completed', {
+      poem_id: todaysGame.id,
+      success: isCorrect,
+      guesses_used: guessedWords.length,
+    });
   };
 
   const handleKeyPress = (key: string) => {

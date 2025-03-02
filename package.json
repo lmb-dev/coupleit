@@ -1,6 +1,6 @@
 {
   "name": "coupleit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
+    "@next/third-parties": "^15.2.0",
     "framer-motion": "^11.11.17",
     "next": "14.2.5",
     "react": "^18",
