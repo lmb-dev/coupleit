@@ -70,13 +70,13 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
 
     if (isCorrect || guessedWords.length + 1 >= 4) {
       setShowResultsModal(true);
-    }
 
-    sendEvent('game_completed', {
-      poem_id: todaysGame.id,
-      success: isCorrect,
-      guesses_used: guessedWords.length,
-    });
+      sendEvent('game_completed', {
+        poem_id: todaysGame.id,
+        success: isCorrect,
+        guesses_used: guessedWords.length,
+      });
+    }
   };
 
   const handleKeyPress = (key: string) => {
