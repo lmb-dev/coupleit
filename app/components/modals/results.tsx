@@ -86,7 +86,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
 
   return (
     showResultsModal && (
-      <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
+      <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
         <motion.div
           ref={popupRef}
           initial={{ opacity: 0, scale: 0.8 }}

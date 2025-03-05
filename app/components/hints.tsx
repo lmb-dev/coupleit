@@ -86,7 +86,7 @@ export default function Hints({ clues, unlockedClues, guessedWords }: HintsProps
                 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 className={`w-36 h-8 flex items-center justify-center rounded-full text-sm font-semibold
-                  ${isUnlocked ? (isHovered ? "bg-black text-gray-300" : "bg-[var(--g1)] text-black cursor-pointer") : "bg-black text-gray-300"}`}
+                  ${isUnlocked ? (isHovered ? "bg-black text-gray-300 uppercase" : "bg-[var(--g1)] text-black cursor-pointer") : "bg-black text-gray-300"}`}
                 onMouseEnter={() => isUnlocked && setHoveredHint(clue.text)}
                 onMouseLeave={() => isUnlocked && setHoveredHint(null)}
                 onClick={() => isUnlocked && setHoveredHint(isHovered ? null : clue.text)}

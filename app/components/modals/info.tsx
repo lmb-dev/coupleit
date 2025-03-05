@@ -28,7 +28,7 @@ export default function InfoModal() {
     <>
       {/* Question Mark Icon Button */}
       <button
-        className="fixed top-2 left-2 z-50  hover:text-gray-700 text-3xl"
+        className="fixed top-2 left-2 z-40  hover:text-gray-700 text-3xl"
         onClick={() => setShowInfoModal(true)}
       >
         <HiQuestionMarkCircle />
