@@ -34,7 +34,7 @@ export default function GameWrapper({ todaysGame, poemNumber }: { todaysGame: Ga
         initial={{ y: 0 }}
         animate={{ y: gameStarted ? "-100vh" : 0 }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
-        className="fixed top-0 left-0 w-full h-full bg-[var(--r1)] overflow-auto flex flex-col items-center justify-center z-50 text-center"
+        className="fixed top-0 left-0 w-full h-full bg-[var(--r1)] overflow-auto flex flex-col items-center justify-center z-30 text-center"
       >
         <img 
           src="/coupleitquill1.webp" 

@@ -4,6 +4,7 @@ import Keyboard from './keyboard';
 import ResultsModal from './modals/results';
 import Hints from './hints';
 import { useAnalytics } from '../utils/analytics';
+import useStats from "../utils/useStats";
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ interface GameProps {
 
 export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {  
   const { sendEvent } = useAnalytics(); 
+  const { stats, recordGame } = useStats(todaysGame.id);
 
   const { guessedWords, setGuessedWords } = useGameState(todaysGame.id);
   
@@ -37,6 +39,22 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   }, [errorMessage]);
 
   const isGameOver = guessedWords.some(({ status }) => status === 'correct') || guessedWords.length >= 4;
+  
+  useEffect(() => {
+    if (isGameOver) {
+      setShowResultsModal(true);
+  
+      sendEvent('game_completed', {
+        poem_id: todaysGame.id,
+        success: guessedWords.some(({ status }) => status === 'correct'),
+        guesses_used: guessedWords.length,
+      });
+  
+      recordGame(guessedWords.some(({ status }) => status === 'correct'), guessedWords.length);
+    }
+  }, [isGameOver]);
+  
+  
 
   const handleSubmit = async () => {
     if (!guess || isGameOver) return;
@@ -67,16 +85,6 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
       setGuessedWords((prev) => [...prev, { word: guess, status: 'correct' }]);
       setGuess('');
     }
-
-    if (isCorrect || guessedWords.length + 1 >= 4) {
-      setShowResultsModal(true);
-
-      sendEvent('game_completed', {
-        poem_id: todaysGame.id,
-        success: isCorrect,
-        guesses_used: guessedWords.length,
-      });
-    }
   };
 
   const handleKeyPress = (key: string) => {
@@ -105,7 +113,7 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
     if (animatingGuess) {
       setGuessedWords((prev) => [...prev, { word: animatingGuess, status: 'incorrect' }]);
       setAnimatingGuess(null);
-    }
+    } 
   };
 
   return (
