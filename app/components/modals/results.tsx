@@ -20,6 +20,14 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const [poemGameStats, setPoemGameStats] = useState({
+    wins: 0,
+    losses: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    averageGuesses: 0,
+  });
+  
 
   const guessesUsed = guessedWords.length;
   const maxGuesses = 4;
@@ -84,6 +92,15 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
     return () => clearInterval(interval);
   }, []);
 
+
+  useEffect(() => {
+    const storedStats = localStorage.getItem("poemGameStats");
+    if (storedStats) {
+      setPoemGameStats(JSON.parse(storedStats));
+    }
+  }, [showResultsModal]); // Runs when modal opens
+  
+
   return (
     showResultsModal && (
       <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
@@ -96,7 +113,7 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
         >
           <h2 className="text-4xl font-bold merienda text-center">{hasCorrectGuess ? "You Coupled It!" : "Bad luck!"}</h2>
 
-          <div className="space-y-2 my-6">
+          <div className="space-y-2 my-4">
             <p className="merienda">Couple It #{String(poemNumber).padStart(3, "0")} / {formatDateFromId(todaysGame?.id)}</p>
             <p className="text-4xl">{guessesEmojis}</p>
             <p>{hasCorrectGuess ? `Good work! You used ${guessesUsed} ${guessesUsed === 1 ? 'guess' : 'guesses'}` : "You failed to guess the rhyming word today."}</p>
@@ -107,9 +124,11 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
             </div>          
           </div>
 
+
+
           {/* Clickable Poem Section */}
           <div 
-            className={`mb-6 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'}`} 
+            className={`mb-3 cursor-pointer ${hasCorrectGuess ? 'g-section' : 'r-section'}`} 
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <h3 className="text-lg text-left my-2 font-bold">
@@ -124,10 +143,29 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
                 line === "" ? <br key={index} /> : <p key={index}>{parseLine(line, true)}</p>
               ))}
             </div>
-            {!isExpanded && <p className='mt-4 text-xl'>...</p>}
+            {!isExpanded && <p className='text-xl'>...</p>}
           </div>
 
 
+          {/* Stats Section */}
+          <div className="flex justify-around items-center text-center mb-4 px-2">
+            <div>
+              <p className="text-2xl">{poemGameStats.wins + poemGameStats.losses}</p>
+              <p className="text-xs">Games Played</p>
+            </div>
+            <div>
+              <p className="text-2xl">{poemGameStats.averageGuesses}</p>
+              <p className="text-xs">Avg. Guesses</p>
+            </div>
+            <div>
+              <p className="text-2xl">{poemGameStats.currentStreak}</p>
+              <p className="text-xs">Current Streak</p>
+            </div>
+            <div>
+              <p className="text-2xl">{poemGameStats.longestStreak}</p>
+              <p className="text-xs">Max Streak</p>
+            </div>
+          </div>
 
           <div className="text-center mt-6">
             <h3 className="text-xl">Next Poem In:</h3>

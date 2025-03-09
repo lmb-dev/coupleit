@@ -42,7 +42,6 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   
   useEffect(() => {
     if (isGameOver) {
-      setShowResultsModal(true);
   
       sendEvent('game_completed', {
         poem_id: todaysGame.id,
@@ -51,6 +50,10 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
       });
   
       recordGame(guessedWords.some(({ status }) => status === 'correct'), guessedWords.length);
+
+      setTimeout(() => {
+        setShowResultsModal(true);
+      }, 100);
     }
   }, [isGameOver]);
   
