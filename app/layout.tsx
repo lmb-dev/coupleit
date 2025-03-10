@@ -21,7 +21,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
         <GoogleAnalytics gaId="G-WHM01C4GG3" />
       </head>
 
-      <body className={`${lora.className} ${merienda.variable}`}>
+      <body className={`${lora.className} ${merienda.variable} antialiased`}>
         {children}
       </body>
     </html>
