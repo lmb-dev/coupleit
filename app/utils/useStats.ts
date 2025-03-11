@@ -21,12 +21,13 @@ const DEFAULT_STATS: GameStats = {
 // Helper function to get yesterday's date in the same format as today (YYYYMMDD)
 const getYesterday = (today: string): string => {
   const date = new Date(
-    Number(today.substring(0, 4)),  // Year
-    Number(today.substring(4, 6)) - 1, // Month (0-based index)
-    Number(today.substring(6, 8)) - 1 // Day
+    Number(today.substring(0, 4)),
+    Number(today.substring(4, 6)) - 1,
+    Number(today.substring(6, 8))
   );
 
-  return date.toISOString().slice(0, 10).replace(/-/g, ''); // Format back to YYYYMMDD
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, 10).replace(/-/g, '');
 };
 
 export default function useStats(today: string) {
