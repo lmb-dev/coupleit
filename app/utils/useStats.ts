@@ -1,82 +1,81 @@
 import { useState, useEffect } from 'react';
 
+interface CompletedGame {
+  id: string;
+  guesses: number;
+  won: boolean;
+}
+
 interface GameStats {
-  wins: number;
-  losses: number;
   currentStreak: number;
   longestStreak: number;
-  averageGuesses: number;
-  completedGames: string[]; // Simple array of completed game IDs
+  completedGames: CompletedGame[];
 }
 
 const DEFAULT_STATS: GameStats = {
-  wins: 0,
-  losses: 0,
   currentStreak: 0,
   longestStreak: 0,
-  averageGuesses: 0,
   completedGames: [],
+};
+
+// Helper function to get yesterday's date in the same format as today (YYYYMMDD)
+const getYesterday = (today: string): string => {
+  const date = new Date(
+    Number(today.substring(0, 4)),  // Year
+    Number(today.substring(4, 6)) - 1, // Month (0-based index)
+    Number(today.substring(6, 8)) - 1 // Day
+  );
+
+  return date.toISOString().slice(0, 10).replace(/-/g, ''); // Format back to YYYYMMDD
 };
 
 export default function useStats(today: string) {
   const [stats, setStats] = useState<GameStats>(() => {
     if (typeof window === 'undefined') return DEFAULT_STATS;
-    
+
     const savedStats = JSON.parse(localStorage.getItem('poemGameStats') || 'null') || DEFAULT_STATS;
-    
-    // Add completedGames if it doesn't exist in saved stats - THIS IS A FIX FOR RETURNING USERS
+
     return {
       ...savedStats,
-      completedGames: savedStats.completedGames || []
+      completedGames: savedStats.completedGames || [],
     };
   });
 
-
-  // Reset current streak if the stored game date doesn't match today's date.
+  // Reset streak if a new day starts but isn't continuous
   useEffect(() => {
     const savedGameState = localStorage.getItem('poemGame');
     if (savedGameState) {
       const gameState = JSON.parse(savedGameState);
-      if (gameState.date !== today && stats.currentStreak !== 0) {
-        setStats(prev => ({ ...prev, currentStreak: 0 }));
+      if (gameState.date !== today) {
+        const yesterday = getYesterday(today);
+        const playedYesterday = stats.completedGames.some(game => game.id === yesterday);
+
+        setStats(prev => ({ ...prev, currentStreak: playedYesterday ? prev.currentStreak : 0 }));
       }
     }
-  }, [today, stats.currentStreak]);
+  }, [today]);
 
-  // Persist stats to localStorage whenever they change.
+  // Persist stats to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('poemGameStats', JSON.stringify(stats));
   }, [stats]);
 
-  // Update stats based on the outcome of a game.
+  // Function to update stats when a game is completed
   const recordGame = (won: boolean, guesses: number) => {
     setStats(prev => {
-      // Check if this game has already been counted
-      const completedGames = prev.completedGames || [];
-      if (completedGames.includes(today)) {
-        return prev; // Don't update stats if game already completed
-      }
+      if (prev.completedGames.some(game => game.id === today)) return prev; // Prevent duplicate entries
 
-      const newStats = { ...prev };
-      // Add this game to completed games
-      newStats.completedGames = [...newStats.completedGames, today];
+      const completedGames = [...prev.completedGames, { id: today, guesses, won }];
 
-      if (won) {
-        newStats.wins += 1;
-        newStats.currentStreak += 1;
-        newStats.longestStreak = Math.max(newStats.longestStreak, newStats.currentStreak);
+      const yesterday = getYesterday(today);
+      const playedYesterday = prev.completedGames.some(game => game.id === yesterday);
 
-        // Calculate new average guesses
-        const totalGuesses = (prev.averageGuesses * prev.wins) + guesses;
-        newStats.averageGuesses = totalGuesses / (prev.wins + 1);
-      } else {
-        newStats.losses += 1;
-        newStats.currentStreak = 0;
-      }
+      const currentStreak = won ? (playedYesterday ? prev.currentStreak + 1 : 1) : 0;
+      const longestStreak = Math.max(prev.longestStreak, currentStreak);
 
-      return newStats;
+      return { currentStreak, longestStreak, completedGames };
     });
   };
 
-  return { stats, recordGame };
+  return { recordGame }; // No need to return stats since it's just for localStorage
 }

@@ -18,7 +18,7 @@ interface GameProps {
 
 export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {  
   const { sendEvent } = useAnalytics(); 
-  const { stats, recordGame } = useStats(todaysGame.id);
+  const { recordGame } = useStats(todaysGame.id);
 
   const { guessedWords, setGuessedWords } = useGameState(todaysGame.id);
   

@@ -20,15 +20,6 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const [poemGameStats, setPoemGameStats] = useState({
-    wins: 0,
-    losses: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-    averageGuesses: 0,
-  });
-  
-
   const guessesUsed = guessedWords.length;
   const maxGuesses = 4;
   const hasCorrectGuess = guessedWords.some(guess => guess.status === 'correct');
@@ -93,13 +84,24 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
   }, []);
 
 
+  // Read stats from localStorage
+  const [completedGames, setCompletedGames] = useState<{ id: string; guesses: number; won: boolean }[]>([]);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
+
   useEffect(() => {
     const storedStats = localStorage.getItem("poemGameStats");
     if (storedStats) {
-      setPoemGameStats(JSON.parse(storedStats));
+      const parsedStats = JSON.parse(storedStats);
+      setCompletedGames(parsedStats.completedGames || []);
+      setCurrentStreak(parsedStats.currentStreak || 0);
+      setLongestStreak(parsedStats.longestStreak || 0);
     }
   }, [showResultsModal]); // Runs when modal opens
-  
+
+  // Compute dynamic stats
+  const totalGames = completedGames.length;
+  const averageGuesses = totalGames > 0 ? (completedGames.reduce((sum, g) => sum + g.guesses, 0) / totalGames).toFixed(1) : "0";
 
   return (
     showResultsModal && (
@@ -150,19 +152,19 @@ export default function ResultsModal({showResultsModal, setShowResultsModal, gue
           {/* Stats Section */}
           <div className="flex justify-around items-center text-center mb-4 px-2">
             <div>
-              <p className="text-2xl">{poemGameStats.wins + poemGameStats.losses}</p>
+              <p className="text-2xl">{totalGames}</p>
               <p className="text-xs">Games Played</p>
             </div>
             <div>
-              <p className="text-2xl">{poemGameStats.averageGuesses}</p>
+              <p className="text-2xl">{averageGuesses}</p>
               <p className="text-xs">Avg. Guesses</p>
             </div>
             <div>
-              <p className="text-2xl">{poemGameStats.currentStreak}</p>
+              <p className="text-2xl">{currentStreak}</p>
               <p className="text-xs">Current Streak</p>
             </div>
             <div>
-              <p className="text-2xl">{poemGameStats.longestStreak}</p>
+              <p className="text-2xl">{longestStreak}</p>
               <p className="text-xs">Max Streak</p>
             </div>
           </div>
