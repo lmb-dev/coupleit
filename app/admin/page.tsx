@@ -13,7 +13,7 @@ export default function Admin() {
   const [currentGame, setCurrentGame] = useState<GameData | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -180,16 +180,58 @@ export default function Admin() {
       }
     }
   };
+
+  const filteredGames = searchQuery
+  ? Array.from(games.values()).filter(game =>
+      game.poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      game.poem.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      game.poem.lines.some(line => line.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+  : [];
+
   
   return (
     <main className="p-4 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Admin Panel</h1>
+        
+        <input
+          type="text"
+          placeholder="Search poems by title, author, or text..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-1/3 p-2 border rounded ml-auto"
+        />
+      </div>
 
       <Calendar
         onDateSelect={handleDateSelect}
         selectedDate={selectedDate}
         highlightedDates={new Set(games.keys())}
       />
+
+      {/* SEARCH RESULTS */}
+      {searchQuery && (
+        <div className="border rounded p-2 mt-4 bg-gray-100 max-h-60 overflow-auto">
+          {filteredGames.length > 0 ? (
+            filteredGames.map(game => (
+              <div
+                key={game.id}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => {
+                  setSelectedDate(game.id);
+                  setCurrentGame(game);
+                  setSearchQuery('');
+                }}
+              >
+                <strong>{game.poem.title}</strong> by {game.poem.author}
+              </div>
+            ))
+          ) : (
+            <p className="p-2 text-gray-500">No matching poems found.</p>
+          )}
+        </div>
+      )}
 
       {selectedDate && currentGame && (
         <div className="mt-4 border rounded-lg p-6 bg-white shadow">
