@@ -1,0 +1,11 @@
+{
+"$schema": "node_modules/wrangler/config-schema.json",
+"name": "coupleit",
+"compatibility_date": "2024-11-12",
+"compatibility_flags": ["nodejs_compat"],
+"pages_build_output_dir": ".vercel/output/static",
+
+"placement": { "mode": "smart" },
+
+"kv_namespaces": [{"binding": "KV", "id":"06f1864178d04364bf6bb2ee97993a6b"}]
+}

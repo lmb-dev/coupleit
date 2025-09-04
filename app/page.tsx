@@ -1,13 +1,14 @@
 export const runtime = 'edge';
-
+import { getRequestContext } from "@cloudflare/next-on-pages";
 import { redirect } from "next/navigation";
 import GameWrapper from "./components/gameWrapper";
 import InfoModal from "./components/modals/info";
-import { getPoems } from "./utils/fetchPoems";
 
 
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const games = await getPoems();
+  const KV = getRequestContext().env.KV;
+  const dataString = await KV.get("POEMS");
+  const games: GameData[] = dataString ? JSON.parse(dataString) : [];
 
   // Extract the game ID from the URL or default to today's date, or choose random game if 'r' is passed
   let gameId =

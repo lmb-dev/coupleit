@@ -17,13 +17,18 @@ export default function Admin() {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const response = await fetch("https://pub-c69f6032f7494f389caf8f27e64853d3.r2.dev/poems.json", {
-        cache: "no-store", 
-      });
-      const data: GameData[] = await response.json();
-      const gamesMap = new Map();
-      data.forEach(game => gamesMap.set(game.id, game));
-      setGames(gamesMap);
+      try {
+        const response = await fetch("/api/updatePoems");
+        const result = (await response.json()) as { data: GameData[] };
+
+        const gamesMap = new Map();
+        (result.data || []).forEach((game: GameData) => gamesMap.set(game.id, game));
+
+        setGames(gamesMap);
+      } catch (error) {
+        console.error("Failed to fetch games:", error);
+        setGames(new Map());
+      }
     };
 
     fetchGames();
