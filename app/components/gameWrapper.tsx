@@ -10,13 +10,13 @@ export default function GameWrapper({ todaysGame, poemNumber }: { todaysGame: Ga
 
   useEffect(() => {
     if (!gameStarted) {
-      document.body.style.overflow = "hidden"; // Disable scrolling on the body
+      document.body.style.overflow = "hidden"; 
     } else {
-      document.body.style.overflow = ""; // Re-enable scrolling
+      document.body.style.overflow = ""; 
     }
 
     return () => {
-      document.body.style.overflow = ""; // Cleanup on unmount
+      document.body.style.overflow = ""; 
     };
   }, [gameStarted]);
 
@@ -26,7 +26,7 @@ export default function GameWrapper({ todaysGame, poemNumber }: { todaysGame: Ga
       <Game 
         todaysGame={todaysGame} 
         poemNumber={poemNumber} 
-        setGameStarted={setGameStarted} // Pass the setter function to Game component
+        setGameStarted={setGameStarted} 
       />
 
       {/* Overlay Intro Screen */}

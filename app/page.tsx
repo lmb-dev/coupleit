@@ -10,13 +10,13 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const dataString = await KV.get("POEMS");
   const games: GameData[] = dataString ? JSON.parse(dataString) : [];
 
-  // Extract the game ID from the URL or default to today's date, or choose random game if 'r' is passed
+  // Extract the game ID from the URL or default to today's date
   let gameId =
     typeof searchParams.game === "string"
       ? searchParams.game
       : new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
-  // If 'r' is passed, choose a random game
+  // choose a random game
   if (gameId === "r") {
     const randomIndex = Math.floor(Math.random() * games.length);
     gameId = games[randomIndex].id;
@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const poemNumber = sortedIds.indexOf(selectedGame.id) + 1;
 
   return (
-    <main className="">
+    <main>
       <GameWrapper todaysGame={selectedGame} poemNumber={poemNumber} />
       <InfoModal />
     </main>

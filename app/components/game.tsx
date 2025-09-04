@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Keyboard from './keyboard';
 import ResultsModal from './modals/results';
 import Hints from './hints';
-import { useAnalytics } from '../utils/analytics';
 import useStats from "../utils/useStats";
 import useGameState from '../utils/useGameState';
 import { parseLine } from '../utils/parseLine';
@@ -17,7 +16,6 @@ interface GameProps {
 }
 
 export default function Game({ todaysGame, poemNumber, setGameStarted }: GameProps) {  
-  const { sendEvent } = useAnalytics(); 
   const { recordGame } = useStats(todaysGame.id);
 
   const { guessedWords, setGuessedWords } = useGameState(todaysGame.id);
@@ -42,12 +40,6 @@ export default function Game({ todaysGame, poemNumber, setGameStarted }: GamePro
   
   useEffect(() => {
     if (isGameOver) {
-  
-      sendEvent('game_completed', {
-        poem_id: todaysGame.id,
-        success: guessedWords.some(({ status }) => status === 'correct'),
-        guesses_used: guessedWords.length,
-      });
   
       recordGame(guessedWords.some(({ status }) => status === 'correct'), guessedWords.length);
 
